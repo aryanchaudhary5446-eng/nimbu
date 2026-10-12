@@ -48,3 +48,4 @@ footer{border-top:1px solid var(--line);padding:20px 16px;color:var(--muted);fon
 #toast.show{transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .credit { text-align: center; opacity: .8; font-size: 14px; margin-top: 8px; }
+

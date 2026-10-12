@@ -38,11 +38,14 @@
 
 <script src="data.js"></script>
 <script src="app.js"></script>
-<script src="features.js"></script>
 
+<!-- features.js temporarily disabled for debugging -->
 
 <script>
-if (!localStorage.getItem('nimbuUser')) location.href = 'welcome.html';
+if (!localStorage.getItem('nimbuUser')) {
+  location.href = 'welcome.html';
+}
 </script>
+
 </body>
 </html>

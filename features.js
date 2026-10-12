@@ -194,24 +194,35 @@ function safetyExtras(slug) {
   if (h2) h2.insertAdjacentHTML("beforebegin", `<div class="note safety"><b>School safety info</b><br>Minimum age: ${esc(s.minAge ?? "not recorded")} · ${esc(s.data || "data practices not recorded")}${link}${s.checked ? `<br><small>Checked on ${esc(s.checked)}. Always confirm on the official site.</small>` : ""}</div>`);
 }
 
+
 const baseRender = window.render;
+
 window.render = function () {
-  const [path, qs] = (location.hash.slice(1) || "/").split("?");
+  const [path] = (location.hash.slice(1) || "/").split("?");
   const parts = path.split("/").filter(Boolean);
   const view = VIEWS[parts[0]];
-  if (!view) {
-    baseRender();
-    if (!parts.length) homeExtras();
-    if (parts[0] === "tool") safetyExtras(parts[1]);
+
+  if (view) {
+    const qs = path.includes("?")
+      ? path.split("?")[1]
+      : "";
+    $app.innerHTML = view(parts, new URLSearchParams(qs));
+    const isNew = location.hash !== lastRoute;
+    lastRoute = location.hash;
+    $app.classList.toggle("enter", isNew);
+    document.title = TITLES[parts[0]] + " | NIMBU";
+    document.getElementById("cmpCount").textContent =
+      cmp.length ? `(${cmp.length})` : "";
+    reveal(isNew);
     return;
   }
-  $app.innerHTML = view(parts, new URLSearchParams(qs || ""));
-  const isNew = location.hash !== lastRoute; lastRoute = location.hash;
-  $app.classList.toggle("enter", isNew);
-  document.title = TITLES[parts[0]] + " | NIMBU";
-  document.getElementById("cmpCount").textContent = cmp.length ? `(${cmp.length})` : "";
-  reveal(isNew);
+
+  baseRender();
+
+  if (!parts.length) homeExtras();
+  if (parts[0] === "tool") safetyExtras(parts[1]);
 };
+
 
 /* ---------- events ---------- */
 document.addEventListener("click", e => {

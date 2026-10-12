@@ -879,4 +879,154 @@ footer {
     transition-duration: .01ms !important;
   }
 }
+/* =========================================
+NIMBU — ANIMATED LOGIN EXPERIENCE
+Works with welcome.html
+========================================= */
+
+body:has(#signin),
+body:has(#welcome) {
+position: relative;
+isolation: isolate;
+overflow-x: hidden;
+}
+
+/* Animated aurora background */
+body:has(#signin)::before,
+body:has(#welcome)::before {
+content: "";
+position: fixed;
+inset: -30%;
+z-index: -2;
+pointer-events: none;
+background:
+radial-gradient(ellipse at 25% 35%,
+rgba(137, 117, 255, .24), transparent 35%),
+radial-gradient(ellipse at 75% 30%,
+rgba(62, 209, 255, .15), transparent 32%),
+radial-gradient(ellipse at 60% 80%,
+rgba(187, 93, 255, .18), transparent 35%);
+filter: blur(35px);
+animation: nimbuAurora 14s ease-in-out infinite alternate;
+}
+
+/* Floating glowing orbs */
+body:has(#signin)::after,
+body:has(#welcome)::after {
+content: "";
+position: fixed;
+width: 240px;
+height: 240px;
+top: 12%;
+right: -80px;
+z-index: -1;
+pointer-events: none;
+border-radius: 50%;
+background: rgba(137, 117, 255, .12);
+filter: blur(35px);
+animation: nimbuFloat 8s ease-in-out infinite;
+}
+
+/* Login form entrance */
+#signin,
+#welcome {
+animation: nimbuLoginEnter .8s cubic-bezier(.2,.8,.2,1) both;
+}
+
+/* Inputs */
+#signin input,
+#welcome input {
+transition:
+border-color .25s ease,
+box-shadow .25s ease,
+transform .25s ease;
+}
+
+#signin input:focus,
+#welcome input:focus {
+transform: translateY(-1px);
+box-shadow:
+0 0 0 4px rgba(137,117,255,.13),
+0 0 24px rgba(137,117,255,.10);
+}
+
+/* Animated login buttons */
+#signin button,
+#welcome button {
+position: relative;
+overflow: hidden;
+transition:
+transform .2s ease,
+box-shadow .25s ease,
+filter .25s ease;
+}
+
+#signin button:hover,
+#welcome button:hover {
+transform: translateY(-2px);
+box-shadow: 0 8px 25px rgba(137,117,255,.20);
+filter: brightness(1.08);
+}
+
+#signin button:active,
+#welcome button:active {
+transform: scale(.97);
+}
+
+/* Gentle glow around form containers */
+#signin,
+#welcome {
+border-radius: 22px;
+transition: box-shadow .3s ease, border-color .3s ease;
+}
+
+#signin:hover,
+#welcome:hover {
+box-shadow: 0 18px 55px rgba(0,0,0,.15);
+}
+
+/* Keyframes */
+@keyframes nimbuAurora {
+0% {
+transform: translate3d(-3%, -2%, 0) rotate(0deg) scale(1);
+}
+50% {
+transform: translate3d(3%, 2%, 0) rotate(8deg) scale(1.08);
+}
+100% {
+transform: translate3d(-2%, 4%, 0) rotate(-5deg) scale(1.02);
+}
+}
+
+@keyframes nimbuFloat {
+0%, 100% {
+transform: translate(0, 0) scale(1);
+}
+50% {
+transform: translate(-45px, 65px) scale(1.2);
+}
+}
+
+@keyframes nimbuLoginEnter {
+from {
+opacity: 0;
+transform: translateY(22px) scale(.98);
+}
+to {
+opacity: 1;
+transform: translateY(0) scale(1);
+}
+}
+
+/* Respect reduced-motion settings */
+@media (prefers-reduced-motion: reduce) {
+body:has(#signin)::before,
+body:has(#welcome)::before,
+body:has(#signin)::after,
+body:has(#welcome)::after,
+#signin,
+#welcome {
+animation: none !important;
+}
+}
 

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Join NIMBU</title>
+<style>
+:root{--y:#FFB800}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;color:#111;background:#fff}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+.top{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.blob{position:absolute;top:-70px;right:-70px;width:200px;height:200px;background:var(--y);border-radius:50%}
+.logo{font-size:84px;position:relative}
+.brand{font-size:44px;font-weight:800;position:relative}
+.tag{font-size:11px;letter-spacing:4px;font-weight:600;position:relative}
+.card{background:var(--y);padding:28px 24px 32px;border-radius:28px 28px 0 0}
+.card h2{margin:0 0 8px;font-size:28px}
+.card p{margin:0 0 20px;font-size:14px}
+.btns{display:flex;gap:12px}
+.btn{flex:1;padding:14px;border:0;border-radius:999px;font-size:16px;font-weight:700}
+.dark{background:#000;color:#fff}
+.light{background:#fff;color:#000}
+#signin{background:var(--y)}
+.head{padding:20px 24px 90px}
+.back{background:none;border:0;font-size:28px;padding:0}
+.head h1{margin:22px 0 8px;font-size:32px}
+.head p{margin:0;font-size:14px}
+.panel{flex:1;background:#fff;border-radius:28px 28px 0 0;margin-top:-60px;padding:28px 24px}
+.field{width:100%;padding:16px 20px;border:0;border-radius:999px;background:#f4f4f4;font-size:16px;margin-bottom:14px}
+.go{width:100%;padding:16px;background:#000;color:#fff;border:0;border-radius:999px;font-size:17px;font-weight:700}
+#msg{min-height:22px;margin-top:14px;text-align:center;font-size:14px}
+.note{font-size:13px;opacity:.7;text-align:center;margin:14px 0 4px}
+</style>
+</head>
+<body>
+<div id="welcome" class="screen active">
+  <div class="top">
+    <div class="blob"></div>
+    <div class="logo">🍋</div>
+    <div class="brand">nimbu</div>
+    <div class="tag">EVERY AI. ONE UNIVERSE.</div>
+  </div>
+  <div class="card">
+    <h2>Welcome</h2>
+    <p>Discover, compare and save the best AI tools, all in one place.</p>
+    <div class="btns">
+      <button class="btn dark" id="btnIn">Sign In</button>
+      <button class="btn light" id="btnUp">Sign Up</button>
+    </div>
+  </div>
+</div>
+<div id="signin" class="screen">
+  <div class="head">
+    <button class="back" id="back">←</button>
+    <h1 id="ttl">Sign In</h1>
+    <p>Enter your email to continue. No password needed.</p>
+  </div>
+  <div class="panel">
+    <input id="email" class="field" type="email" placeholder="Email">
+    <button class="go" id="go">Continue</button>
+    <div id="msg"></div>
+    <p class="note">We'll only use your email to send NIMBU updates.</p>
+    <p class="note">Built by Aryan</p>
+  </div>
+</div>
+<script>
+var $ = function(id){ return document.getElementById(id); };
+function openSignin(t){
+  $('ttl').textContent = t;
+  $('welcome').classList.remove('active');
+  $('signin').classList.add('active');
+}
+$('btnIn').onclick = function(){ openSignin('Sign In'); };
+$('btnUp').onclick = function(){ openSignin('Join NIMBU'); };
+$('back').onclick = function(){
+  $('signin').classList.remove('active');
+  $('welcome').classList.add('active');
+};
+$('go').onclick = function(){
+  var v = $('email').value.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+    $('msg').textContent = 'Please enter a valid email.';
+    return;
+  }
+  var list = JSON.parse(localStorage.getItem('nimbuUsers') || '[]');
+  if (list.indexOf(v) === -1) list.push(v);
+  localStorage.setItem('nimbuUsers', JSON.stringify(list));
+  localStorage.setItem('nimbuUser', v);
+  fetch('https://formspree.io/f/moejlzla', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    body: JSON.stringify({ email: v })
+  }).catch(function(){});
+  $('msg').textContent = "✅ You're done! Taking you to NIMBU...";
+  setTimeout(function(){ location.href = 'nimbu.html'; }, 1200);
+};
+</script>
+</body>
+</html>

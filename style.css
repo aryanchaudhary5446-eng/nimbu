@@ -1,0 +1,49 @@
+/* Themes: every color comes from these variables */
+:root{--bg:#0e0f1a;--panel:#171829;--line:#2a2c47;--text:#eceefc;--muted:#a3a7c9;--accent:#7c7cff;--accent2:#b18cff;--on:#0e0f1a;--r:14px}
+[data-theme=snow]{--bg:#fbfbfc;--panel:#fff;--line:#e3e5ea;--text:#16181d;--muted:#5b616e;--accent:#2f4bd8;--accent2:#5b6ff0;--on:#fff}
+[data-theme=aurora]{--bg:#08142b;--panel:#0f2040;--line:#1f3a66;--text:#e6f3ff;--muted:#93b0d4;--accent:#27d3e6;--accent2:#8f7cff;--on:#04101f}
+[data-theme=sunset]{--bg:#fff6e8;--panel:#fffdf8;--line:#f0dcc0;--text:#2b1b12;--muted:#7a5f4d;--accent:#e8553d;--accent2:#f29e1f;--on:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 "Avenir Next","Segoe UI",system-ui,sans-serif;transition:background .3s,color .3s}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+.skip{position:absolute;left:-999px}.skip:focus{left:8px;top:8px;background:var(--panel);padding:8px;z-index:9}
+.top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:5}
+.logo{font:800 1.5rem Georgia,serif;letter-spacing:.04em;color:var(--text);text-decoration:none}
+.top nav{display:flex;flex-wrap:wrap;gap:4px 14px;flex:1}
+.top nav a{color:var(--muted);text-decoration:none;padding:8px 2px;min-height:40px}
+.top nav a:hover{color:var(--text)}
+.themebox{font-size:.85rem;color:var(--muted)}
+select,input,textarea,button,.btn{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
+button,.btn{cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+button:hover,.btn:hover{border-color:var(--accent)}
+.primary{background:var(--accent);color:var(--on);border-color:var(--accent);font-weight:700}
+.small{min-height:38px;padding:6px 10px;font-size:.9rem}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 40px;outline:none}
+.hero{padding:34px 0 18px}
+.hero h1{font:800 clamp(2rem,7vw,3.6rem)/1.05 Georgia,serif;margin:0 0 12px;max-width:14em}
+.hero p{color:var(--muted);max-width:36em}
+.searchrow{display:flex;gap:8px;margin:18px 0 10px}.searchrow input{flex:1;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{border-radius:999px;font-size:.9rem;min-height:36px;padding:4px 14px;color:var(--muted)}
+h2{font-size:1.3rem;margin:32px 0 12px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
+.card h3{margin:0;font-size:1.1rem}.card p{margin:0;color:var(--muted);font-size:.95rem}
+.card .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:6px}
+.badge{font-size:.78rem;border:1px solid var(--line);border-radius:6px;padding:1px 8px;color:var(--muted)}
+.badge.price{border-color:var(--accent);color:var(--accent)}
+.filters{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:12px 0}
+.note{border-left:4px solid var(--accent2);background:var(--panel);padding:10px 14px;border-radius:0 10px 10px 0;color:var(--muted);font-size:.92rem}
+.empty{text-align:center;padding:40px 10px;color:var(--muted)}
+textarea{width:100%;min-height:110px;resize:vertical}
+table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;min-width:140px}
+.chat{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.msg{max-width:88%;padding:10px 14px;border-radius:16px;white-space:pre-wrap}
+.msg.u{align-self:flex-end;background:var(--accent);color:var(--on)}
+.msg.a{align-self:flex-start;background:var(--panel);border:1px solid var(--line)}
+footer{border-top:1px solid var(--line);padding:20px 16px;color:var(--muted);font-size:.88rem;max-width:1000px;margin:auto}
+#toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,80px);background:var(--accent);color:var(--on);padding:10px 18px;border-radius:999px;font-weight:700;transition:transform .25s;pointer-events:none}
+#toast.show{transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

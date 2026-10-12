@@ -1,0 +1,29 @@
+[
+  {
+    "id": "chatgpt",
+    "name": "ChatGPT",
+    "category": "Chatbot",
+    "url": "https://chatgpt.com",
+    "description": "General-purpose AI assistant for writing, coding and research.",
+    "pricing": "Free + paid",
+    "tags": ["writing", "coding", "research"]
+  },
+  {
+    "id": "claude",
+    "name": "Claude",
+    "category": "Chatbot",
+    "url": "https://claude.ai",
+    "description": "AI assistant for writing, analysis, coding and long documents.",
+    "pricing": "Free + paid",
+    "tags": ["writing", "coding", "analysis"]
+  },
+  {
+    "id": "perplexity",
+    "name": "Perplexity",
+    "category": "Search",
+    "url": "https://perplexity.ai",
+    "description": "AI-powered search that answers with sources.",
+    "pricing": "Free + paid",
+    "tags": ["search", "research"]
+  }
+]

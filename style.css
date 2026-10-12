@@ -1081,4 +1081,26 @@ animation: none !important;
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
 #totop{position:fixed;right:16px;bottom:max(18px,env(safe-area-inset-bottom));z-index:60;width:46px;height:46px;min-height:46px;padding:0;border-radius:50%;opacity:0;transform:translateY(12px);pointer-events:none;background:var(--accent);color:var(--on);border-color:var(--accent);box-shadow:var(--shadow-hover)}
 #totop.show{opacity:1;transform:none;pointer-events:auto}
+/* ===== NIMBU: audiences, wizard, toolkit, collections, safety, forms ===== */
+.aud-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));margin:14px 0}
+.aud{display:flex;flex-direction:column;gap:6px;padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);color:var(--text);text-decoration:none;box-shadow:var(--shadow);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+.aud:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:var(--shadow-hover);color:var(--text)}
+.aud .ai{font-size:1.8rem;line-height:1}
+.aud small{color:var(--muted);line-height:1.5}
+#app.enter .aud{animation:cardEnter .45s ease both}
+.audbar{margin:8px 0 26px}
+.step{font-weight:750;margin:18px 0 4px}
+.optrow{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}
+.opt{border-radius:999px;min-height:40px;padding:6px 15px;background:var(--surface);color:var(--muted)}
+.opt[aria-pressed="true"]{background:var(--accent);color:var(--on);border-color:var(--accent);font-weight:750}
+.tkbox{width:100%;min-height:220px}
+.fgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));margin:12px 0}
+.fgrid label{display:flex;flex-direction:column;gap:6px;font-size:.9rem;color:var(--muted)}
+.checklist{list-style:none;padding:0;margin:14px 0;display:grid;gap:10px}
+.checklist label{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;cursor:pointer;line-height:1.5}
+.checklist input{width:20px;height:20px;min-height:0;margin-top:3px;flex:none}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.formstatus{min-height:22px;margin-top:10px}
+.safety{margin:14px 0}
+@media print{.top,footer,#toast,#totop,.noprint{display:none!important}}
 

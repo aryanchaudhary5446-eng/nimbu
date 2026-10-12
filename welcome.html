@@ -5,33 +5,291 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Join NIMBU</title>
 <style>
-:root{--y:#FFB800}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,sans-serif;color:#111;background:#fff}
-.screen{display:none;min-height:100vh;flex-direction:column}
-.screen.active{display:flex}
-.top{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.blob{position:absolute;top:-70px;right:-70px;width:200px;height:200px;background:var(--y);border-radius:50%}
-.logo{font-size:84px;position:relative}
-.brand{font-size:44px;font-weight:800;position:relative}
-.tag{font-size:11px;letter-spacing:4px;font-weight:600;position:relative}
-.card{background:var(--y);padding:28px 24px 32px;border-radius:28px 28px 0 0}
-.card h2{margin:0 0 8px;font-size:28px}
-.card p{margin:0 0 20px;font-size:14px}
-.btns{display:flex;gap:12px}
-.btn{flex:1;padding:14px;border:0;border-radius:999px;font-size:16px;font-weight:700}
-.dark{background:#000;color:#fff}
-.light{background:#fff;color:#000}
-#signin{background:var(--y)}
-.head{padding:20px 24px 90px}
-.back{background:none;border:0;font-size:28px;padding:0}
-.head h1{margin:22px 0 8px;font-size:32px}
-.head p{margin:0;font-size:14px}
-.panel{flex:1;background:#fff;border-radius:28px 28px 0 0;margin-top:-60px;padding:28px 24px}
-.field{width:100%;padding:16px 20px;border:0;border-radius:999px;background:#f4f4f4;font-size:16px;margin-bottom:14px}
-.go{width:100%;padding:16px;background:#000;color:#fff;border:0;border-radius:999px;font-size:17px;font-weight:700}
-#msg{min-height:22px;margin-top:14px;text-align:center;font-size:14px}
-.note{font-size:13px;opacity:.7;text-align:center;margin:14px 0 4px}
+:root {
+--y: #FFB800;
+}
+
+* {
+  box-sizing: border-box;
+  }
+
+body {
+margin: 0;
+font-family: system-ui, sans-serif;
+color: #111;
+background: #fff;
+overflow-x: hidden;
+}
+
+.screen {
+display: none;
+min-height: 100vh;
+flex-direction: column;
+}
+
+.screen.active {
+display: flex;
+animation: screenEnter .65s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.top {
+flex: 1;
+min-height: 50vh;
+position: relative;
+overflow: hidden;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+background:
+radial-gradient(circle at 15% 20%, #fff4c5 0, transparent 35%),
+linear-gradient(145deg, #fff 20%, #fff9e8 100%);
+}
+
+.blob {
+position: absolute;
+top: -70px;
+right: -70px;
+width: 230px;
+height: 230px;
+background: var(--y);
+border-radius: 50%;
+animation: blobFloat 7s ease-in-out infinite alternate;
+box-shadow: 0 0 80px #ffb80035;
+}
+
+.blob::before,
+.blob::after {
+content: "";
+position: absolute;
+border: 1px solid #ffffff90;
+border-radius: 50%;
+}
+
+.blob::before {
+inset: 22px;
+}
+
+.blob::after {
+inset: 45px;
+}
+
+.logo {
+font-size: 84px;
+position: relative;
+display: inline-block;
+animation: lemonFloat 3s ease-in-out infinite;
+filter: drop-shadow(0 12px 12px #e9a50030);
+}
+
+.brand {
+font-size: 44px;
+font-weight: 800;
+letter-spacing: -2px;
+position: relative;
+animation: fadeUp .8s .1s both;
+}
+
+.tag {
+font-size: 11px;
+letter-spacing: 4px;
+font-weight: 600;
+position: relative;
+animation: fadeUp .8s .25s both;
+}
+
+.card {
+position: relative;
+background: var(--y);
+padding: 28px 24px 32px;
+border-radius: 28px 28px 0 0;
+animation: cardUp .8s .1s both;
+}
+
+.card h2 {
+margin: 0 0 8px;
+font-size: 28px;
+}
+
+.card p {
+margin: 0 0 20px;
+font-size: 14px;
+line-height: 1.6;
+}
+
+.btns {
+display: flex;
+gap: 12px;
+}
+
+.btn {
+flex: 1;
+padding: 14px;
+border: 0;
+border-radius: 999px;
+font-size: 16px;
+font-weight: 700;
+cursor: pointer;
+transition: transform .2s, box-shadow .2s, background .2s;
+}
+
+.btn:active,
+.go:active {
+transform: scale(.96);
+}
+
+.btn:hover,
+.go:hover {
+transform: translateY(-3px);
+box-shadow: 0 8px 20px #00000020;
+}
+
+.dark {
+background: #000;
+color: #fff;
+}
+
+.light {
+background: #fff;
+color: #000;
+}
+
+#signin {
+background: var(--y);
+}
+
+.head {
+padding: 20px 24px 90px;
+}
+
+.back {
+background: #ffffff80;
+border: 0;
+font-size: 28px;
+width: 48px;
+height: 48px;
+border-radius: 50%;
+cursor: pointer;
+transition: transform .2s, background .2s;
+}
+
+.back:hover {
+transform: translateX(-4px);
+background: #fff;
+}
+
+.head h1 {
+margin: 22px 0 8px;
+font-size: 32px;
+animation: fadeUp .5s both;
+}
+
+.head p {
+margin: 0;
+font-size: 14px;
+}
+
+.panel {
+flex: 1;
+background: #fff;
+border-radius: 28px 28px 0 0;
+margin-top: -60px;
+padding: 28px 24px;
+position: relative;
+animation: panelUp .65s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.field {
+width: 100%;
+padding: 16px 20px;
+border: 2px solid transparent;
+border-radius: 999px;
+background: #f4f4f4;
+font-size: 16px;
+margin-bottom: 14px;
+outline: none;
+transition: border-color .25s, box-shadow .25s, background .25s;
+}
+
+.field:focus {
+border-color: var(--y);
+background: #fffdf6;
+box-shadow: 0 0 0 5px #ffb80025;
+}
+
+.go {
+width: 100%;
+padding: 16px;
+background: #000;
+color: #fff;
+border: 0;
+border-radius: 999px;
+font-size: 17px;
+font-weight: 700;
+cursor: pointer;
+transition: transform .2s, box-shadow .2s;
+}
+
+#msg {
+min-height: 22px;
+margin-top: 14px;
+text-align: center;
+font-size: 14px;
+}
+
+.note {
+font-size: 13px;
+opacity: .7;
+text-align: center;
+margin: 14px 0 4px;
+}
+
+@keyframes screenEnter {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+@keyframes lemonFloat {
+0%, 100% { transform: translateY(0) rotate(-5deg); }
+50% { transform: translateY(-12px) rotate(5deg); }
+}
+
+@keyframes blobFloat {
+from { transform: translate(0, 0) scale(1); }
+to { transform: translate(-25px, 25px) scale(1.12); }
+}
+
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(16px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cardUp {
+from { opacity: 0; transform: translateY(25px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes panelUp {
+from { opacity: 0; transform: translateY(35px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 380px) {
+.logo { font-size: 68px; }
+.brand { font-size: 38px; }
+.tag { font-size: 9px; letter-spacing: 3px; }
+.card { padding: 24px 18px 28px; }
+.panel { padding: 24px 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+*, *::before, *::after {
+animation-duration: .01ms !important;
+animation-iteration-count: 1 !important;
+transition-duration: .01ms !important;
+}
+}
 </style>
 </head>
 <body>

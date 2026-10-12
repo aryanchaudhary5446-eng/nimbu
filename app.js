@@ -1,9 +1,12 @@
 "use strict";
+
 /* NIMBU app. Hash routes: #/ #/tools?q=&cat=&price= #/tool/<slug> #/prompts #/compare #/favs #/ask */
 const { tools: TOOLS, prompts: PROMPTS } = window.NIMBU;
 const $app = document.getElementById("app");
 const PAGE = 12;
 let shown = PAGE;
+let lastRoute = null;
+const reduce = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 
 /* ---------- helpers ---------- */
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -11,6 +14,8 @@ const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; 
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* storage blocked */ } };
 const PRICE = { free: "Free", freemium: "Freemium", paid: "Paid", opensource: "Open source", unknown: "Pricing unknown" };
 const CATS = [...new Set(TOOLS.flatMap(t => t.cats))].sort();
+const CAT_COUNT = {};
+TOOLS.forEach(t => t.cats.forEach(c => { CAT_COUNT[c] = (CAT_COUNT[c] || 0) + 1; }));
 let favTools = load("nimbu.favTools", []), favPrompts = load("nimbu.favPrompts", []), cmp = load("nimbu.cmp", []);
 let chat = load("nimbu.chat", []);
 
@@ -50,10 +55,21 @@ function searchTools({ q = "", cat = "", price = "", level = "", sort = "az" }) 
 }
 
 /* ---------- components ---------- */
+/* Logo = the tool website's icon (Google favicon service). Letter badge shows if it fails. */
+function toolLogo(t, size = "") {
+  let host = "";
+  try { host = new URL(t.url).hostname; } catch { /* bad url */ }
+  const letter = esc((t.name || "?").charAt(0).toUpperCase());
+  const img = host
+    ? `<img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=128" alt="" width="44" height="44" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`
+    : "";
+  return `<span class="tlogo ${size}" aria-hidden="true"><span class="tlogo-fallback">${letter}</span>${img}</span>`;
+}
+
 function toolCard(t) {
   const fav = favTools.includes(t.slug), inCmp = cmp.includes(t.slug);
-  return `<article class="card">
-    <h3><a href="#/tool/${t.slug}">${esc(t.name)}</a></h3>
+  return `<article class="card reveal">
+    <div class="cardhead">${toolLogo(t)}<h3><a href="#/tool/${t.slug}">${esc(t.name)}</a></h3></div>
     <p>${esc(t.desc)}</p>
     <div><span class="badge price">${PRICE[t.pricing]}</span> <span class="badge">${esc(t.cats[0])}</span> <span class="badge">${t.status === "unverified" ? "Not yet verified" : "Verified " + esc(t.verified)}</span></div>
     <div class="row">
@@ -65,7 +81,7 @@ function toolCard(t) {
 }
 function promptCard(p) {
   const fav = favPrompts.includes(p.id);
-  return `<article class="card"><h3>${esc(p.title)}</h3>
+  return `<article class="card reveal"><h3>${esc(p.title)}</h3>
     <div><span class="badge">${esc(p.cat)}</span> <span class="badge">${esc(p.level)}</span> <span class="badge">${esc(p.tools.join(", "))}</span></div>
     <label>Edit before copying (replace the [PLACEHOLDERS]):<textarea id="ta-${p.id}">${esc(p.text)}</textarea></label>
     <div class="row"><button class="small primary" data-act="copyp" data-id="${p.id}">Copy prompt</button>
@@ -76,14 +92,17 @@ function promptCard(p) {
 function home() {
   const pod = PROMPTS[new Date().getDate() % PROMPTS.length];
   const pop = ["learn python", "presentation", "summarize pdf", "video clips", "automation"];
-  return `<section class="hero"><h1>Find the Perfect AI for Anything.</h1>
+  const freeCount = TOOLS.filter(t => ["free", "freemium", "opensource"].includes(t.pricing)).length;
+  const stat = (n, label) => `<div class="stat"><b data-count="${n}">${n}</b><span>${label}</span></div>`;
+  return `<section class="hero"><h1>Find the <span class="grad">Perfect AI</span> for Anything.</h1>
     <p>NIMBU is an independent directory of AI tools. Search by task, filter by price, save favorites, and compare tools side by side.</p>
-    <form class="searchrow" id="heroSearch"><input id="q" type="search" placeholder="What do you want to do with AI?" aria-label="Search AI tools">
+    <form class="searchrow" id="heroSearch"><div class="sbox"><input id="q" type="search" autocomplete="off" placeholder="What do you want to do with AI?" aria-label="Search AI tools"><div class="sugg" id="sugg" hidden></div></div>
     <button class="primary">Search</button></form>
     <div class="chips">${pop.map(p => `<a class="btn chip" href="#/tools?q=${encodeURIComponent(p)}">${p}</a>`).join("")}</div>
-    <a class="btn primary" href="#/tools">Explore AI tools</a> <a class="btn" href="#/prompts">Discover prompts</a></section>
+    <a class="btn primary" href="#/tools">Explore AI tools</a> <a class="btn" href="#/prompts">Discover prompts</a> <button type="button" class="btn" data-act="surprise">🎲 Surprise me</button></section>
+    <div class="stats">${stat(TOOLS.length, "AI tools")}${stat(CATS.length, "Categories")}${stat(freeCount, "With a free option")}${stat(PROMPTS.length, "Ready prompts")}</div>
     <p class="note">Directory size: <b>${TOOLS.length} starter tools</b>. None are marked verified yet; each needs a human check of its official site. NIMBU does not show ratings or trending data because no real data source is connected.</p>
-    <h2>Categories</h2><div class="chips">${CATS.map(c => `<a class="btn chip" href="#/tools?cat=${encodeURIComponent(c)}">${esc(c)}</a>`).join("")}</div>
+    <h2>Categories</h2><div class="chips">${CATS.map(c => `<a class="btn chip" href="#/tools?cat=${encodeURIComponent(c)}">${esc(c)} <span class="cnt">${CAT_COUNT[c]}</span></a>`).join("")}</div>
     <h2>Recently added</h2><div class="grid">${searchTools({ sort: "new" }).slice(0, 6).map(toolCard).join("")}</div>
     <h2>Prompt of the day</h2><div class="grid">${promptCard(pod)}</div>
     <h2>Ask NIMBU</h2><p>Describe your task and get tools from this directory. <a href="#/ask">Open the assistant (demo mode)</a></p>`;
@@ -94,7 +113,9 @@ function toolsView(params) {
   const list = searchTools(f);
   const opts = (obj, cur) => Object.entries(obj).map(([v, l]) => `<option value="${v}" ${cur === v ? "selected" : ""}>${l}</option>`).join("");
   const active = ["q", "cat", "price", "level"].filter(k => f[k]).length;
+  const quick = [["free", "Free"], ["freemium", "Freemium"], ["opensource", "Open source"]];
   return `<h1>AI tools</h1>
+    <div class="chips">${quick.map(([v, l]) => `<a class="btn chip" href="#/tools?price=${v}">${l}</a>`).join("")}</div>
     <form id="filterForm"><input name="q" type="search" value="${esc(f.q)}" placeholder="Search name, task, tag, price" aria-label="Search" style="width:100%">
     <div class="filters">
       <select name="cat" aria-label="Category"><option value="">All categories</option>${CATS.map(c => `<option ${f.cat === c ? "selected" : ""}>${esc(c)}</option>`).join("")}</select>
@@ -113,10 +134,16 @@ function detail(slug) {
   if (!t) return `<div class="empty"><p>That tool is not in the directory.</p><a class="btn" href="#/tools">Browse tools</a></div>`;
   const recent = [slug, ...load("nimbu.recent", []).filter(s => s !== slug)].slice(0, 8); save("nimbu.recent", recent);
   const related = TOOLS.filter(x => x.slug !== slug && x.cats.some(c => t.cats.includes(c))).slice(0, 3);
-  return `<a href="#/tools">Back to tools</a><h1>${esc(t.name)}</h1><p>${esc(t.desc)}</p>
+  const fav = favTools.includes(slug), inCmp = cmp.includes(slug);
+  return `<a href="#/tools">Back to tools</a><h1 class="dhead">${toolLogo(t, "lg")}<span>${esc(t.name)}</span></h1><p>${esc(t.desc)}</p>
     <p><span class="badge price">${PRICE[t.pricing]}</span> ${t.cats.map(c => `<span class="badge">${esc(c)}</span>`).join(" ")} ${t.tags.map(c => `<span class="badge">${esc(c)}</span>`).join(" ")}</p>
     <p class="note">Status: ${t.status}. Features, limitations, and platforms are not recorded yet, so none are shown. Check pricing on the official site.</p>
-    <a class="btn primary" href="${esc(t.url)}" target="_blank" rel="noopener noreferrer">Visit official site</a>
+    <div class="actions">
+      <a class="btn primary" href="${esc(t.url)}" target="_blank" rel="noopener noreferrer">Visit official site</a>
+      <button data-act="fav" data-id="${t.slug}" aria-pressed="${fav}">${fav ? "★ Saved" : "☆ Save"}</button>
+      <button data-act="cmp" data-id="${t.slug}" aria-pressed="${inCmp}">${inCmp ? "✓ Comparing" : "Compare"}</button>
+      <button data-act="link" data-id="${t.slug}">Copy link</button>
+    </div>
     <h2>Related tools</h2><div class="grid">${related.map(toolCard).join("") || "<p>None yet.</p>"}</div>`;
 }
 
@@ -124,7 +151,7 @@ function compareView() {
   const sel = cmp.map(s => TOOLS.find(t => t.slug === s)).filter(Boolean);
   if (sel.length < 2) return `<h1>Compare</h1><div class="empty"><p>Pick at least two tools with the Compare button.</p><a class="btn" href="#/tools">Browse tools</a></div>`;
   const row = (label, fn) => `<tr><th scope="row">${label}</th>${sel.map(t => `<td>${fn(t)}</td>`).join("")}</tr>`;
-  return `<h1>Compare</h1><table><tr><th></th>${sel.map(t => `<th>${esc(t.name)}</th>`).join("")}</tr>
+  return `<h1>Compare</h1><table><tr><th></th>${sel.map(t => `<th><span class="cmphead">${toolLogo(t)}<span>${esc(t.name)}</span></span></th>`).join("")}</tr>
     ${row("Purpose", t => esc(t.desc))}${row("Pricing", t => PRICE[t.pricing])}${row("Categories", t => esc(t.cats.join(", ")))}
     ${row("Tags", t => esc(t.tags.join(", ")))}${row("Platforms", () => "Not verified")}${row("Strengths", () => "Not verified")}${row("Limitations", () => "Not verified")}</table>
     <p><button data-act="clearcmp">Clear comparison</button></p>`;
@@ -166,6 +193,65 @@ function askView() {
     <button class="small" data-act="clearchat">Clear conversation</button>`;
 }
 
+/* ---------- motion helpers ---------- */
+let io = null;
+function reveal(isNew) {
+  if (io) io.disconnect();
+  const els = $app.querySelectorAll(".reveal");
+  if (!isNew || reduce || !("IntersectionObserver" in window)) {
+    els.forEach(el => el.classList.add("in", "instant"));
+    return;
+  }
+  io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+  els.forEach((el, i) => { el.style.setProperty("--d", (i % 6) * 60 + "ms"); io.observe(el); });
+}
+
+function countUp() {
+  document.querySelectorAll("[data-count]").forEach(el => {
+    const end = Number(el.dataset.count) || 0;
+    if (reduce || !end) { el.textContent = end; return; }
+    el.textContent = "0";
+    const t0 = performance.now(), dur = 900;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / dur);
+      el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+let typeTimer = null;
+function typewriter() {
+  clearTimeout(typeTimer);
+  if (reduce || !document.getElementById("q")) return;
+  const phrases = ["Summarize a long PDF", "Learn Python from scratch", "Make a presentation fast", "Turn long videos into clips", "Automate boring tasks"];
+  let p = 0, i = 0, del = false;
+  const tick = () => {
+    const el = document.getElementById("q");
+    if (!el) return;
+    const word = phrases[p];
+    i += del ? -1 : 1;
+    if (document.activeElement !== el && !el.value) el.placeholder = word.slice(0, i) || "\u00a0";
+    let delay = del ? 28 : 65;
+    if (!del && i >= word.length) { del = true; delay = 1500; }
+    else if (del && i <= 0) { del = false; p = (p + 1) % phrases.length; delay = 450; }
+    typeTimer = setTimeout(tick, delay);
+  };
+  tick();
+}
+
+/* Back-to-top button */
+const topBtn = document.createElement("button");
+topBtn.id = "totop"; topBtn.type = "button"; topBtn.setAttribute("aria-label", "Back to top"); topBtn.textContent = "↑";
+document.body.appendChild(topBtn);
+topBtn.onclick = () => window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+window.addEventListener("scroll", () => topBtn.classList.toggle("show", window.scrollY > 600), { passive: true });
+
 /* ---------- router ---------- */
 function render() {
   const [path, qs] = (location.hash.slice(1) || "/").split("?");
@@ -173,8 +259,13 @@ function render() {
   const parts = path.split("/").filter(Boolean);
   const view = { "": () => home(), tools: () => toolsView(params), tool: () => detail(parts[1]), prompts: () => promptsView(params), compare: compareView, favs: favsView, ask: askView }[parts[0] || ""];
   $app.innerHTML = view ? view() : `<div class="empty"><p>Page not found.</p><a class="btn" href="#/">Go home</a></div>`;
+  const isNew = location.hash !== lastRoute; lastRoute = location.hash;
+  $app.classList.toggle("enter", isNew);
   document.title = (parts[0] === "tool" ? (TOOLS.find(t => t.slug === parts[1])?.name || "Tool") + " | " : "") + "NIMBU";
   document.getElementById("cmpCount").textContent = cmp.length ? `(${cmp.length})` : "";
+  reveal(isNew);
+  if (isNew) countUp();
+  typewriter();
 }
 window.addEventListener("hashchange", () => { shown = PAGE; render(); window.scrollTo(0, 0); });
 
@@ -194,7 +285,22 @@ function send(text) {
   chat.push({ r: "u", t: text.slice(0, 500) }, { r: "a", t: demoReply(text) });
   save("nimbu.chat", chat); render();
 }
+
+/* Live suggestions under the hero search box */
+document.addEventListener("input", e => {
+  if (e.target.id !== "q") return;
+  const box = document.getElementById("sugg"); if (!box) return;
+  const v = e.target.value.trim();
+  if (!v) { box.hidden = true; return; }
+  const hits = searchTools({ q: v }).slice(0, 5);
+  box.innerHTML = hits.length
+    ? hits.map(t => `<a href="#/tool/${t.slug}">${toolLogo(t)}<span><b>${esc(t.name)}</b><small>${esc(t.cats[0])}</small></span></a>`).join("")
+    : `<div class="sugg-empty">No matches. Press Search to try anyway.</div>`;
+  box.hidden = false;
+});
+
 document.addEventListener("click", e => {
+  if (!e.target.closest(".sbox")) { const s = document.getElementById("sugg"); if (s) s.hidden = true; }
   const b = e.target.closest("[data-act]"); if (!b) return;
   const id = b.dataset.id, act = b.dataset.act;
   if (act === "fav") toggle(favTools, "nimbu.favTools", id);
@@ -207,13 +313,19 @@ document.addEventListener("click", e => {
   else if (act === "clearcmp") { cmp = []; save("nimbu.cmp", cmp); }
   else if (act === "clearchat") { chat = []; save("nimbu.chat", chat); }
   else if (act === "suggest") return send(b.textContent);
+  else if (act === "surprise") {
+    const t = TOOLS[Math.floor(Math.random() * TOOLS.length)];
+    if (t) location.hash = "#/tool/" + t.slug;
+    return;
+  }
   render();
 });
-/* Press "/" to focus the first search box */
+
+/* Press "/" to focus the first search box, Esc closes suggestions */
 document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { const s = document.getElementById("sugg"); if (s) s.hidden = true; }
   if (e.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) {
     const i = document.querySelector("input[type=search]"); if (i) { e.preventDefault(); i.focus(); }
   }
 });
 render();
-

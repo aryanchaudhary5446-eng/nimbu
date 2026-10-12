@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" data-theme="midnight">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NIMBU: Every AI. One Universe.</title>
+<meta name="description" content="NIMBU is an independent directory that helps you find the right AI tool for your task.">
+<meta property="og:title" content="NIMBU: Every AI. One Universe.">
+<meta property="og:description" content="Find the right AI tool for any task.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#app">Skip to content</a>
+<header class="top">
+  <a class="logo" href="#/">NIMBU</a>
+  <nav aria-label="Main">
+    <a href="#/tools">Tools</a>
+    <a href="#/prompts">Prompts</a>
+    <a href="#/ask">Ask NIMBU</a>
+    <a href="#/compare">Compare <span id="cmpCount"></span></a>
+    <a href="#/favs">Saved</a>
+  </nav>
+  <label class="themebox">Theme
+    <select id="theme">
+      <option value="midnight">Midnight</option>
+      <option value="snow">Snow</option>
+      <option value="aurora">Aurora</option>
+      <option value="sunset">Sunset</option>
+    </select>
+  </label>
+</header>
+<main id="app" tabindex="-1"></main>
+<footer>
+  <p>NIMBU is an independent directory. It does not own or operate the tools listed. Links go to external sites. Your favorites and theme are stored only in this browser.</p>
+</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+if (!localStorage.getItem('nimbuUser')) location.href = 'login.html';
+</script>
+</body>
+</html>

@@ -328,4 +328,5 @@ document.addEventListener("keydown", e => {
     const i = document.querySelector("input[type=search]"); if (i) { e.preventDefault(); i.focus(); }
   }
 });
+window.render = render;
 render();

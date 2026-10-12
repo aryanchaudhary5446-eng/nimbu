@@ -1029,4 +1029,56 @@ body:has(#welcome)::after,
 animation: none !important;
 }
 }
+/* ===== NIMBU: logos, motion, search suggestions, stats ===== */
+
+/* scroll-reveal cards */
+#app .card.reveal{opacity:0;animation:none}
+#app .card.reveal.in{opacity:1;animation:revealUp .55s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:var(--d,0ms)}
+#app .card.reveal.in.instant{animation:none}
+@keyframes revealUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* page entrance (plays once per page) */
+#app.enter > h1,#app.enter > h2{animation:nimbuEnter .5s ease both}
+#app.enter .hero h1{animation:nimbuEnter .6s ease both}
+#app.enter .hero p{animation:nimbuEnter .6s .08s ease both}
+#app.enter .hero .searchrow{animation:nimbuEnter .6s .16s ease both}
+#app.enter .hero .chips{animation:nimbuEnter .6s .24s ease both}
+#app.enter .stats{animation:nimbuEnter .6s .32s ease both}
+
+/* animated headline */
+.hero h1 .grad{background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent));background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+@keyframes shine{to{background-position:200% center}}
+
+/* logos */
+.cardhead{display:flex;align-items:center;gap:12px}
+.dhead{display:flex;align-items:center;gap:14px}
+.cmphead{display:flex;align-items:center;gap:10px}
+.tlogo{position:relative;flex:none;width:44px;height:44px;border-radius:12px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;background:var(--surface-hover);border:1px solid var(--line);transition:transform var(--speed) ease}
+.tlogo.lg{width:60px;height:60px;border-radius:16px}
+.tlogo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:7px;background:#fff}
+.tlogo-fallback{font-weight:800;font-size:1.15rem;color:var(--accent)}
+.card:hover .tlogo{transform:scale(1.08) rotate(-3deg)}
+
+/* search box + live suggestions */
+.searchrow .sbox{position:relative;flex:1;min-width:0}
+.sugg{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:30;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-hover);overflow:hidden}
+.sugg[hidden]{display:none}
+.sugg a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:var(--text);text-decoration:none}
+.sugg a:hover{background:var(--surface-hover)}
+.sugg a .tlogo{width:34px;height:34px;border-radius:10px}
+.sugg a span:last-child{display:flex;flex-direction:column;line-height:1.3}
+.sugg small{color:var(--muted)}
+.sugg-empty{padding:12px 14px;color:var(--muted);font-size:.9rem}
+
+/* stats strip */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:22px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:center;box-shadow:var(--shadow)}
+.stat b{display:block;font:800 1.9rem/1.1 Georgia,serif;color:var(--accent)}
+.stat span{color:var(--muted);font-size:.85rem}
+
+/* misc */
+.cnt{margin-left:4px;font-size:.78rem;opacity:.7}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+#totop{position:fixed;right:16px;bottom:max(18px,env(safe-area-inset-bottom));z-index:60;width:46px;height:46px;min-height:46px;padding:0;border-radius:50%;opacity:0;transform:translateY(12px);pointer-events:none;background:var(--accent);color:var(--on);border-color:var(--accent);box-shadow:var(--shadow-hover)}
+#totop.show{opacity:1;transform:none;pointer-events:auto}
 

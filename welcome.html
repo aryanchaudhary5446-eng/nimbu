@@ -3,357 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Join NIMBU</title>
+<title>NIMBU – Every AI. One Universe.</title>
+<meta name="description" content="NIMBU is a free AI tools directory. Discover, search and compare AI tools, and find ready-to-use prompts, all in one place.">
 <style>
-:root {
---y: #FFB800;
-}
-
-* {
-  box-sizing: border-box;
-  }
-
-body {
-margin: 0;
-font-family: system-ui, sans-serif;
-color: #111;
-background: #fff;
-overflow-x: hidden;
-}
-
-.screen {
-display: none;
-min-height: 100vh;
-flex-direction: column;
-}
-
-.screen.active {
-display: flex;
-animation: screenEnter .65s cubic-bezier(.2,.8,.2,1) both;
-}
-
-.top {
-flex: 1;
-min-height: 50vh;
-position: relative;
-overflow: hidden;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-text-align: center;
-background:
-radial-gradient(circle at 15% 20%, #fff4c5 0, transparent 35%),
-linear-gradient(145deg, #fff 20%, #fff9e8 100%);
-}
-
-.blob {
-position: absolute;
-top: -70px;
-right: -70px;
-width: 230px;
-height: 230px;
-background: var(--y);
-border-radius: 50%;
-animation: blobFloat 7s ease-in-out infinite alternate;
-box-shadow: 0 0 80px #ffb80035;
-}
-
-.blob::before,
-.blob::after {
-content: "";
-position: absolute;
-border: 1px solid #ffffff90;
-border-radius: 50%;
-}
-
-.blob::before {
-inset: 22px;
-}
-
-.blob::after {
-inset: 45px;
-}
-
-.logo {
-font-size: 84px;
-position: relative;
-display: inline-block;
-animation: lemonFloat 3s ease-in-out infinite;
-filter: drop-shadow(0 12px 12px #e9a50030);
-}
-
-.brand {
-font-size: 44px;
-font-weight: 800;
-letter-spacing: -2px;
-position: relative;
-animation: fadeUp .8s .1s both;
-}
-
-.tag {
-font-size: 11px;
-letter-spacing: 4px;
-font-weight: 600;
-position: relative;
-animation: fadeUp .8s .25s both;
-}
-
-.card {
-position: relative;
-background: var(--y);
-padding: 28px 24px 32px;
-border-radius: 28px 28px 0 0;
-animation: cardUp .8s .1s both;
-}
-
-.card h2 {
-margin: 0 0 8px;
-font-size: 28px;
-}
-
-.card p {
-margin: 0 0 20px;
-font-size: 14px;
-line-height: 1.6;
-}
-
-.btns {
-display: flex;
-gap: 12px;
-}
-
-.btn {
-flex: 1;
-padding: 14px;
-border: 0;
-border-radius: 999px;
-font-size: 16px;
-font-weight: 700;
-cursor: pointer;
-transition: transform .2s, box-shadow .2s, background .2s;
-}
-
-.btn:active,
-.go:active {
-transform: scale(.96);
-}
-
-.btn:hover,
-.go:hover {
-transform: translateY(-3px);
-box-shadow: 0 8px 20px #00000020;
-}
-
-.dark {
-background: #000;
-color: #fff;
-}
-
-.light {
-background: #fff;
-color: #000;
-}
-
-#signin {
-background: var(--y);
-}
-
-.head {
-padding: 20px 24px 90px;
-}
-
-.back {
-background: #ffffff80;
-border: 0;
-font-size: 28px;
-width: 48px;
-height: 48px;
-border-radius: 50%;
-cursor: pointer;
-transition: transform .2s, background .2s;
-}
-
-.back:hover {
-transform: translateX(-4px);
-background: #fff;
-}
-
-.head h1 {
-margin: 22px 0 8px;
-font-size: 32px;
-animation: fadeUp .5s both;
-}
-
-.head p {
-margin: 0;
-font-size: 14px;
-}
-
-.panel {
-flex: 1;
-background: #fff;
-border-radius: 28px 28px 0 0;
-margin-top: -60px;
-padding: 28px 24px;
-position: relative;
-animation: panelUp .65s cubic-bezier(.2,.8,.2,1) both;
-}
-
-.field {
-width: 100%;
-padding: 16px 20px;
-border: 2px solid transparent;
-border-radius: 999px;
-background: #f4f4f4;
-font-size: 16px;
-margin-bottom: 14px;
-outline: none;
-transition: border-color .25s, box-shadow .25s, background .25s;
-}
-
-.field:focus {
-border-color: var(--y);
-background: #fffdf6;
-box-shadow: 0 0 0 5px #ffb80025;
-}
-
-.go {
-width: 100%;
-padding: 16px;
-background: #000;
-color: #fff;
-border: 0;
-border-radius: 999px;
-font-size: 17px;
-font-weight: 700;
-cursor: pointer;
-transition: transform .2s, box-shadow .2s;
-}
-
-#msg {
-min-height: 22px;
-margin-top: 14px;
-text-align: center;
-font-size: 14px;
-}
-
-.note {
-font-size: 13px;
-opacity: .7;
-text-align: center;
-margin: 14px 0 4px;
-}
-
-@keyframes screenEnter {
-from { opacity: 0; }
-to { opacity: 1; }
-}
-
-@keyframes lemonFloat {
-0%, 100% { transform: translateY(0) rotate(-5deg); }
-50% { transform: translateY(-12px) rotate(5deg); }
-}
-
-@keyframes blobFloat {
-from { transform: translate(0, 0) scale(1); }
-to { transform: translate(-25px, 25px) scale(1.12); }
-}
-
-@keyframes fadeUp {
-from { opacity: 0; transform: translateY(16px); }
-to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes cardUp {
-from { opacity: 0; transform: translateY(25px); }
-to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes panelUp {
-from { opacity: 0; transform: translateY(35px); }
-to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 380px) {
-.logo { font-size: 68px; }
-.brand { font-size: 38px; }
-.tag { font-size: 9px; letter-spacing: 3px; }
-.card { padding: 24px 18px 28px; }
-.panel { padding: 24px 18px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-*, *::before, *::after {
-animation-duration: .01ms !important;
-animation-iteration-count: 1 !important;
-transition-duration: .01ms !important;
-}
-}
+:root{--y:#FFB800}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#111;background:#fff}
+.screen{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.top{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+.blob{position:absolute;border-radius:50%;background:var(--y)}
+.b1{top:-70px;right:-70px;width:200px;height:200px;animation:drift 9s ease-in-out infinite}
+.b2{bottom:-90px;left:-90px;width:220px;height:220px;opacity:.35;animation:drift 11s ease-in-out infinite reverse}
+.logo{position:relative;font-size:84px;line-height:1;display:inline-block;animation:pop .7s cubic-bezier(.2,.9,.3,1.3) both,bob 3.2s ease-in-out .7s infinite}
+.brand{position:relative;font-size:46px;font-weight:800;letter-spacing:-1px;margin:8px 0 0;animation:rise .6s .15s ease both}
+.tag{position:relative;font-size:11px;letter-spacing:4px;font-weight:600;margin-top:6px;animation:rise .6s .25s ease both}
+.card{background:var(--y);padding:28px 24px calc(32px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;animation:slideUp .6s .2s cubic-bezier(.2,.8,.2,1) both}
+.card h2{margin:0 0 8px;font-size:28px}
+.card p{margin:0 0 20px;font-size:14px;line-height:1.5}
+.btns{display:flex;gap:12px}
+.btn{position:relative;overflow:hidden;flex:1;display:flex;align-items:center;justify-content:center;padding:14px;border-radius:999px;font-size:16px;font-weight:700;text-decoration:none;text-align:center;transition:transform .2s ease}
+.btn:active{transform:scale(.97)}
+.dark{background:#000;color:#fff}
+.light{background:#fff;color:#000}
+.dark::after{content:"";position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-120%);animation:shine 3.6s ease-in-out 1s infinite}
+.credit{margin-top:16px;text-align:center;font-size:12px;opacity:.7}
+@keyframes pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(-14px,12px)}}
+@keyframes shine{from{transform:translateX(-120%)}to{transform:translateX(320%)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div id="welcome" class="screen active">
+<main class="screen">
   <div class="top">
-    <div class="blob"></div>
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
     <div class="logo">🍋</div>
     <div class="brand">nimbu</div>
     <div class="tag">EVERY AI. ONE UNIVERSE.</div>
   </div>
   <div class="card">
     <h2>Welcome</h2>
-    <p>Discover, compare and save the best AI tools, all in one place.</p>
+    <p>Discover, compare and save the best AI tools, all in one place. Free, and no sign-up needed.</p>
     <div class="btns">
-      <button class="btn dark" id="btnIn">Sign In</button>
-      <button class="btn light" id="btnUp">Sign Up</button>
+      <a class="btn dark" href="nimbu.html">Enter NIMBU</a>
+      <a class="btn light" href="nimbu.html#/tools">Explore tools</a>
     </div>
+    <div class="credit">Built by Aryan</div>
   </div>
-</div>
-<div id="signin" class="screen">
-  <div class="head">
-    <button class="back" id="back">←</button>
-    <h1 id="ttl">Sign In</h1>
-    <p>Enter your email to continue. No password needed.</p>
-  </div>
-  <div class="panel">
-    <input id="email" class="field" type="email" placeholder="Email">
-    <button class="go" id="go">Continue</button>
-    <div id="msg"></div>
-    <p class="note">We'll only use your email to send NIMBU updates.</p>
-    <p class="note">Built by Aryan</p>
-  </div>
-</div>
-<script>
-var $ = function(id){ return document.getElementById(id); };
-function openSignin(t){
-  $('ttl').textContent = t;
-  $('welcome').classList.remove('active');
-  $('signin').classList.add('active');
-}
-$('btnIn').onclick = function(){ openSignin('Sign In'); };
-$('btnUp').onclick = function(){ openSignin('Join NIMBU'); };
-$('back').onclick = function(){
-  $('signin').classList.remove('active');
-  $('welcome').classList.add('active');
-};
-$('go').onclick = function(){
-  var v = $('email').value.trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
-    $('msg').textContent = 'Please enter a valid email.';
-    return;
-  }
-  var list = JSON.parse(localStorage.getItem('nimbuUsers') || '[]');
-  if (list.indexOf(v) === -1) list.push(v);
-  localStorage.setItem('nimbuUsers', JSON.stringify(list));
-  localStorage.setItem('nimbuUser', v);
-  fetch('https://formspree.io/f/moejlzla', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-    body: JSON.stringify({ email: v })
-  }).catch(function(){});
-  $('msg').textContent = "✅ You're done! Taking you to NIMBU...";
-  setTimeout(function(){ location.href = 'nimbu.html'; }, 1200);
-};
-</script>
+</main>
 </body>
 </html>

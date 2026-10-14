@@ -2,298 +2,100 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fafafd"><title>Kitto AI</title>
+
 <style>
-(() => {
-  const $ = id => document.getElementById(id);
-  const STORE = "kitto-chats-v1";
-
-  let chats = [];
-  let activeId = null;
-  let typing = false;
-  let model = "Quantum 3";
-
-  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;",
-    '"': "&quot;", "'": "&#39;"
-  }[c]));
-
-  function loadChats() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORE) || "[]");
-      chats = Array.isArray(saved) ? saved : [];
-    } catch {
-      chats = [];
-    }
+:root {
+  color-scheme: light;
+  --bg: #f7f8fa;
+  --ink: #171717;
+  --muted: #737782;
+  --line: #e5e7eb;
+  --blue: #2563eb;
+  --card: #ffffff;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+button, input, textarea, select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+.app {
+  min-height: 100vh;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+#main {
+  width: min(900px, 100%);
+  margin: 0 auto;
+  padding: 24px 16px 130px;
+}
+#home, #chat {
+  width: 100%;
+}
+h1, h2, h3 {
+  letter-spacing: -0.03em;
+}
+button, .card {
+  border-radius: 12px;
+}
+button {
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--ink);
+}
+button:hover {
+  background: #f0f2f5;
+}
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: white;
+  color: var(--ink);
+}
+.card {
+  padding: 18px;
+  margin: 12px 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+footer {
+  background: white;
+}
+#shade {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: #0006;
+}
+@media (max-width: 600px) {
+  header {
+    padding: 12px;
   }
-
-  function saveChats() {
-    try {
-      localStorage.setItem(STORE, JSON.stringify(chats.slice(-30)));
-    } catch {
-      notice("Couldn't save chat history on this device.");
-    }
+  #main {
+    padding: 18px 12px 120px;
   }
-
-  function currentChat() {
-    return chats.find(c => c.id === activeId);
-  }
-
-  function createChat() {
-    const chat = {
-      id: String(Date.now()) + Math.random().toString(36).slice(2, 7),
-      title: "New chat",
-      messages: []
-    };
-    chats.unshift(chat);
-    activeId = chat.id;
-    saveChats();
-    render();
-  }
-
-  function notice(message) {
-    $("noticeText").textContent = message;
-    $("notice").classList.remove("hidden");
-  }
-
-  function render() {
-    const chat = currentChat();
-    const messages = chat?.messages || [];
-    const empty = messages.length === 0 && !typing;
-
-    $("home").classList.toggle("hidden", !empty);
-    $("chat").classList.toggle("hidden", empty);
-    $("chat").innerHTML = messages.map((m, i) => {
-      if (m.role === "user") {
-        return `<div class="userrow"><div class="bubble">${esc(m.text)}</div></div>`;
-      }
-
-      return `<div class="airow">
-        <span class="avatar sm"><span class="eyes"><i></i><i></i></span></span>
-        <div class="content">
-          <div class="heading">Kitto AI <small>AI response</small></div>
-          <div class="answer">${esc(m.text)}</div>
-          <div class="actions">
-            <button data-copy="${i}">Copy</button>
-          </div>
-        </div>
-      </div>`;
-    }).join("") + (typing ? `
-      <div class="airow">
-        <span class="avatar sm"><span class="eyes"><i></i><i></i></span></span>
-        <div class="content">
-          <div class="heading">Kitto AI <small>Thinking…</small></div>
-          <div class="typing"><i></i><i></i><i></i></div>
-        </div>
-      </div>` : "");
-
-    $("send").disabled = typing;
-    $("main").scrollTop = $("main").scrollHeight;
-  }
-
-  function resize() {
-    const input = $("prompt");
-    input.style.height = "auto";
-    input.style.height = Math.min(input.scrollHeight, 110) + "px";
-    $("sendIcon").textContent = input.value.trim() ? "↑" : "➤";
-  }
-
-  async function send(value) {
-    const question = (value === undefined ? $("prompt").value : value).trim();
-    if (!question || typing) return;
-
-    if (!window.NIMBU_SUPABASE) {
-      notice("Supabase isn't loaded. Check the Supabase scripts.");
-      return;
-    }
-
-    if (!currentChat()) createChat();
-
-    const chat = currentChat();
-    chat.messages.push({ role: "user", text: question });
-
-    if (chat.title === "New chat") {
-      chat.title = question.slice(0, 45);
-    }
-
-    $("prompt").value = "";
-    resize();
-    typing = true;
-    saveChats();
-    render();
-
-    try {
-      const { data, error } = await window.NIMBU_SUPABASE
-        .functions.invoke("swift-endpoint", {
-          body: { question }
-        });
-
-      if (error) throw error;
-
-      const answer = data?.answer;
-      if (typeof answer !== "string" || !answer.trim()) {
-        throw new Error("The AI returned an empty response.");
-      }
-
-      chat.messages.push({ role: "assistant", text: answer });
-      saveChats();
-    } catch (error) {
-      console.error("KITTO AI error:", error);
-      chat.messages.push({
-        role: "assistant",
-        text: "I couldn't get a response from the AI right now. Please check your connection and try again."
-      });
-      saveChats();
-    } finally {
-      typing = false;
-      render();
-    }
-  }
-
-  function showHistory() {
-    const drawer = document.querySelector(".drawer");
-    if (!drawer) return;
-
-    let section = $("kittoHistoryList");
-    if (!section) {
-      section = document.createElement("div");
-      section.id = "kittoHistoryList";
-      section.innerHTML = '<div class="label">Recent chats</div>';
-      const promo = drawer.querySelector(".promo");
-      drawer.insertBefore(section, promo);
-    }
-
-    section.querySelectorAll(".kitto-history-item").forEach(el => el.remove());
-
-    chats.forEach(chat => {
-      const button = document.createElement("button");
-      button.className = "item kitto-history-item";
-      button.textContent = chat.title || "New chat";
-      button.style.width = "100%";
-      button.onclick = () => {
-        activeId = chat.id;
-        $("overlay").classList.add("hidden");
-        render();
-      };
-      section.appendChild(button);
-    });
-  }
-
-  document.querySelectorAll("[data-prompt]").forEach(button => {
-    button.onclick = () => send(button.dataset.prompt);
-  });
-
-  $("send").onclick = () => send();
-  $("prompt").addEventListener("input", resize);
-  $("prompt").addEventListener("keydown", event => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      send();
-    }
-  });
-
-  $("openMenu").onclick = () => {
-    showHistory();
-    $("overlay").classList.remove("hidden");
-  };
-
-  $("closeMenu").onclick = $("shade").onclick = () =>
-    $("overlay").classList.add("hidden");
-
-  $("newChat").onclick = () => {
-    createChat();
-    $("overlay").classList.add("hidden");
-    $("prompt").focus();
-  };
-
-  $("history").onclick = () => {
-    showHistory();
-    notice("Choose a conversation from Recent chats.");
-  };
-
-  $("settings").onclick = () => notice("Settings are not connected yet.");
-  $("upgrade").onclick = () => notice("Paid plans aren't configured yet.");
-  $("profile").onclick = () => notice("KITTO AI · Your AI workspace");
-  $("plans").onclick = () => notice("Upgrade options aren't configured yet.");
-  $("noticeX").onclick = () => $("notice").classList.add("hidden");
-
-  $("modelBtn").onclick = () => {
-    $("models").classList.toggle("hidden");
-  };
-
-  $("models").querySelectorAll("[data-model]").forEach(button => {
-    button.onclick = () => {
-      model = button.dataset.model;
-      $("modelName").textContent = model;
-      $("models").classList.add("hidden");
-      notice("Display preference updated. The backend model stays unchanged.");
-    };
-  });
-
-  $("toolsBtn").onclick = () => $("tools").classList.toggle("hidden");
-  $("attach").onclick = () => notice("File analysis isn't connected yet.");
-  $("explore").onclick = () => notice("More tools can be integrated next.");
-
-  $("mic").onclick = () => {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      notice("Voice input isn't supported in this browser.");
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-IN";
-    recognition.onresult = event => {
-      $("prompt").value = event.results[0][0].transcript;
-      resize();
-      $("prompt").focus();
-    };
-    recognition.onerror = () => notice("Voice input failed. Please try again.");
-    recognition.start();
-    notice("Listening… speak now.");
-  };
-
-  $("chat").addEventListener("click", async event => {
-    const button = event.target.closest("[data-copy]");
-    if (!button) return;
-
-    const message = currentChat()?.messages[Number(button.dataset.copy)];
-    if (!message) return;
-
-    try {
-      await navigator.clipboard.writeText(message.text);
-      notice("Copied to clipboard.");
-    } catch {
-      notice("Copy isn't available in this browser.");
-    }
-  });
-
-  document.addEventListener("click", event => {
-    if (!$("models").contains(event.target) &&
-        !$("modelBtn").contains(event.target)) {
-      $("models").classList.add("hidden");
-    }
-
-    if (!$("tools").contains(event.target) &&
-        !$("toolsBtn").contains(event.target)) {
-      $("tools").classList.add("hidden");
-    }
-  });
-
-  loadChats();
-
-  if (chats.length) {
-    activeId = chats[0].id;
-  } else {
-    createChat();
-  }
-
-  resize();
-  render();
-})();
-
+}
 </style>
+
 </head>
 <body>
 <div class="app">

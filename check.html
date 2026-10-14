@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NIMBU check</title>
+<style>
+body{font:16px/1.5 system-ui,sans-serif;margin:0;padding:18px;background:#fff;color:#111}
+h1{font-size:1.3rem}
+.r{display:flex;gap:10px;padding:10px 12px;margin:8px 0;border-radius:12px;background:#f3f3f3}
+.ok{background:#dff6e0}.bad{background:#fde0de}
+button{font:inherit;padding:12px 16px;border:0;border-radius:12px;background:#111;color:#fff;margin:8px 8px 0 0}
+small{color:#555}
+</style></head><body>
+<h1>🍋 NIMBU health check</h1>
+<div id="out"></div>
+<button id="fix">Fix: clear app cache</button>
+<button id="go">Open NIMBU in app mode</button>
+<script>
+(async () => {
+  const out = document.getElementById("out");
+  const row = (ok, t, d) => out.insertAdjacentHTML("beforeend",
+    `<div class="r ${ok ? "ok" : "bad"}"><b>${ok ? "✅" : "❌"}</b><div>${t}${d ? "<br><small>" + d + "</small>" : ""}</div></div>`);
+  const get = async u => {
+    try {
+      const r = await fetch(u + (u.includes("?") ? "&" : "?") + "t=" + Date.now(), { cache: "no-store" });
+      return r.ok ? await r.text() : null;
+    } catch (e) { return null; }
+  };
+  const std = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  row(std, "Running as installed app", std ? "" : "Normal in a Chrome tab. Only needs to be green inside the app.");
+
+  const html = await get("nimbu.html");
+  row(!!html, "nimbu.html loads from the server");
+  if (html) {
+    row(html.includes("is-app"), "nimbu.html has the app-mode flag script");
+    row(/style\.css\?v=5/.test(html), "nimbu.html links style.css?v=5", "Found: " + ((html.match(/style\.css\?v=\d+/) || ["nothing"])[0]));
+    row(/appmode\.js\?v=2/.test(html), "nimbu.html links appmode.js?v=2", "Found: " + ((html.match(/appmode\.js\?v=\d+/) || ["nothing"])[0]));
+  }
+  const css = await get("style.css");
+  row(!!css, "style.css loads");
+  if (css) {
+    row(css.includes("html.is-app"), "style.css has the app-mode block");
+    row(css.includes("APP MODE v2"), "style.css has the v2 block (menu + sections)");
+  }
+  const js = await get("appmode.js");
+  row(!!js, "appmode.js exists on the server");
+  if (js) row(js.includes("app mode v2"), "appmode.js is the v2 version");
+
+  const regs = navigator.serviceWorker ? await navigator.serviceWorker.getRegistrations() : [];
+  row(regs.length > 0, "Service worker registered", regs.length + " found");
+  const keys = window.caches ? await caches.keys() : [];
+  row(true, "Cache storage", keys.length ? keys.join(", ") : "empty");
+
+  document.getElementById("fix").onclick = async () => {
+    for (const r of regs) await r.unregister();
+    for (const k of keys) await caches.delete(k);
+    alert("Cleared. Close the NIMBU app completely, then open it twice.");
+  };
+  document.getElementById("go").onclick = () => { location.href = "nimbu.html?app=1"; };
+})();
+</script></body></html>

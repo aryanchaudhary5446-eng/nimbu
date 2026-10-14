@@ -444,3 +444,54 @@
     animation: none;
   }
 }
+
+/* KITTO rainbow theme — floating widget only */
+#kitto-launcher {
+  background: linear-gradient(
+    135deg, #ff55b8, #9b5cff, #36d9ff, #56efb0, #ffe45c
+  ) !important;
+  background-size: 300% 300% !important;
+  animation: kitto-rainbow 6s ease infinite !important;
+  border: 2px solid rgba(255,255,255,.85) !important;
+  box-shadow: 0 0 24px rgba(180,90,255,.5) !important;
+}
+
+#kitto-panel {
+  background: linear-gradient(
+    145deg, #fff0fb, #f0eaff, #e8faff, #eafff4
+  ) !important;
+  background-size: 300% 300% !important;
+  animation: kitto-rainbow 12s ease infinite !important;
+  border: 1px solid rgba(255,255,255,.9) !important;
+  box-shadow: 0 16px 50px rgba(110,65,190,.25) !important;
+}
+
+#kitto-panel .kitto-eye {
+  display: inline-block;
+  animation: kitto-eyes-look 4s ease-in-out infinite;
+}
+
+#kitto-panel .kitto-eye:nth-child(2) {
+  animation-delay: .2s;
+}
+
+@keyframes kitto-rainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes kitto-eyes-look {
+  0%, 15%, 100% { transform: translate(0, 0); }
+  30%, 40% { transform: translate(2px, -1px); }
+  55%, 65% { transform: translate(-2px, 1px); }
+  80%, 90% { transform: translate(0, -1px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #kitto-launcher,
+  #kitto-panel,
+  #kitto-panel .kitto-eye {
+    animation: none !important;
+  }
+}

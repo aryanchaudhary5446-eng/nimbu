@@ -49,7 +49,59 @@ try{var q=location.search,s=sessionStorage;if(/[?&]app=1/.test(q))s.setItem("nim
 <script src="pro.js?v=1"></script>
 <script src="install.js?v=1"></script>
 <script src="appmode.js?v=2"></script>
-
+<div id="splash" aria-hidden="true">
+  <svg class="sp-svg" viewBox="0 20 240 170" aria-hidden="true">
+    <defs>
+      <linearGradient id="spSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE45C"/><stop offset="1" stop-color="#FFB800"/></linearGradient>
+      <linearGradient id="spBlade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4F7FB"/><stop offset="1" stop-color="#AEB9C7"/></linearGradient>
+    </defs>
+    <g class="sp-lemon">
+      <g class="sp-half sp-top">
+        <path d="M32 110Q44 78 120 54Q196 78 208 110Z" fill="url(#spSkin)" stroke="#D99A00" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M62 92Q80 72 108 66" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="5" stroke-linecap="round"/>
+        <g class="sp-face">
+          <path d="M32 110Q120 138 208 110Z" fill="#FFF1A8" stroke="#FFFBE0" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M120 111V122M120 111L98 119M120 111L142 119M120 111L76 114M120 111L164 114" fill="none" stroke="#FFD84D" stroke-width="3" stroke-linecap="round"/>
+        </g>
+      </g>
+      <g class="sp-half sp-bot">
+        <path d="M32 110Q44 142 120 166Q196 142 208 110Z" fill="url(#spSkin)" stroke="#D99A00" stroke-width="3" stroke-linejoin="round"/>
+        <g class="sp-face">
+          <path d="M32 110Q120 82 208 110Z" fill="#FFF1A8" stroke="#FFFBE0" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M120 109V98M120 109L98 101M120 109L142 101M120 109L76 106M120 109L164 106" fill="none" stroke="#FFD84D" stroke-width="3" stroke-linecap="round"/>
+        </g>
+      </g>
+      <line class="sp-cut" x1="32" y1="110" x2="208" y2="110" stroke="#fff" stroke-opacity=".85" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <circle class="sp-drop" cx="88" cy="108" r="3.6" fill="#FFE45C" style="--dx:-20px;--d:1.05s"/>
+    <circle class="sp-drop" cx="112" cy="108" r="3" fill="#FFF1A8" style="--dx:-7px;--d:1.12s"/>
+    <circle class="sp-drop" cx="132" cy="108" r="3.6" fill="#FFE45C" style="--dx:8px;--d:1.18s"/>
+    <circle class="sp-drop" cx="154" cy="108" r="3" fill="#FFF1A8" style="--dx:22px;--d:1.24s"/>
+    <g class="sp-knife">
+      <rect x="-250" y="98" width="100" height="24" rx="11" fill="#3b2a1f"/>
+      <circle cx="-228" cy="110" r="3" fill="#d6b36a"/><circle cx="-204" cy="110" r="3" fill="#d6b36a"/>
+      <rect x="-154" y="96" width="8" height="28" rx="2" fill="#8c96a4"/>
+      <path d="M-150 101H-44Q-18 103 -12 110L-150 119Z" fill="url(#spBlade)" stroke="#8a97a8" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M-146 104H-50" stroke="#fff" stroke-opacity=".8" stroke-width="1.5" stroke-linecap="round"/>
+    </g>
+  </svg>
+  <div class="sp-word">nimbu</div>
+  <div class="sp-tag">EVERY AI. ONE UNIVERSE.</div>
+  <div class="sp-bar"></div>
+</div>
+<script>
+(function(){
+  var d=document.documentElement,s=document.getElementById("splash");if(!s)return;
+  var skip=!d.classList.contains("is-app");
+  try{if(/[?&]splash=1/.test(location.search))sessionStorage.removeItem("nimbu.splashed");if(sessionStorage.getItem("nimbu.splashed")==="1")skip=true;}catch(e){}
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)skip=true;
+  if(skip){s.remove();return;}
+  try{sessionStorage.setItem("nimbu.splashed","1");}catch(e){}
+  d.classList.add("splash-on");
+  var done=function(){if(!s.parentNode)return;s.classList.add("out");setTimeout(function(){s.remove();d.classList.remove("splash-on");},400);};
+  s.addEventListener("click",done);setTimeout(done,2700);
+})();
+</script>
 
 </body>
 </html>

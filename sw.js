@@ -1,4 +1,4 @@
-const CACHE = "nimbu-v2";
+const CACHE = "nimbu-v3";
 const CORE = ["nimbu.html", "welcome.html", "style.css", "data.js", "tools-extra.js", "app.js", "features.js", "pro.js", "appmode.js", "manifest.json", "icon.svg"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.all(CORE.map(u => c.add(u).catch(() => {})))).then(() => self.skipWaiting()));

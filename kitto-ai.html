@@ -3,9 +3,296 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fafafd"><title>Kitto AI</title>
 <style>
-:root{--bg:#fafafd;--ink:#172033;--muted:#7d879b;--line:#e1e4ed;--blue:#514de8}*{box-sizing:border-box}body{margin:0;background:#e9eaf0;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}button,textarea{font:inherit}button{cursor:pointer}.app{height:100dvh;min-height:560px;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);position:relative}.top{height:76px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 17px;border-bottom:1px solid #e9eaf0;background:#ffffffd9;backdrop-filter:blur(16px);z-index:3}.ib{border:0;background:transparent;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#20283a}.ib:hover{background:#f0f1f6}.plan{display:flex;align-items:center;gap:7px;border:1px solid #d7dbe6;border-radius:30px;background:white;padding:10px 13px;font-size:12px;white-space:nowrap}.plan b{color:var(--blue)}.avatar{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;background:linear-gradient(140deg,#b9efff,#8e94ff 60%,#bd8cff)}.avatar.sm{width:38px;height:38px}.eyes{display:flex;gap:4px;background:#101527;border-radius:50%;padding:9px 6px}.eyes i{width:7px;height:7px;background:#75edff;border-radius:50%;box-shadow:0 0 6px #75edff}.main{flex:1;min-height:0;overflow:auto;padding:20px}.home{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 24px}.logo{width:76px;height:76px;display:grid;place-items:center;border-radius:26px;background:linear-gradient(140deg,#e1f5ff,#e4e4ff 58%,#f0e3ff);margin-bottom:19px;box-shadow:0 10px 30px #6366f11c}.logo svg{width:46px;height:46px}.eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#6259d9;font-weight:750;margin-bottom:9px}h1{font-size:27px;letter-spacing:-1px;text-align:center;margin:0;font-weight:680}.intro{max-width:310px;text-align:center;color:var(--muted);font-size:14px;line-height:1.8;margin:13px 0 29px}.cards{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{min-height:137px;padding:14px;text-align:left;border:1px solid var(--line);border-radius:21px;background:white;box-shadow:0 3px 12px #0f172a06;transition:.18s}.card:hover{transform:translateY(-2px);border-color:#c8c5ff}.ci{width:36px;height:36px;border-radius:13px;background:#eff0ff;color:var(--blue);display:grid;place-items:center;margin-bottom:12px}.card strong{display:block;font-size:13px;margin-bottom:5px}.card small{display:block;color:var(--muted);font-size:11.5px;line-height:1.55}.chat{display:flex;flex-direction:column;gap:25px;padding:5px 0 20px}.userrow{display:flex;justify-content:flex-end}.bubble{max-width:87%;white-space:pre-wrap;background:#eeeff5;border-radius:22px 22px 5px 22px;padding:13px 15px;font-size:14px;line-height:1.65}.airow{display:flex;align-items:flex-start;gap:11px}.content{flex:1;min-width:0;padding-top:3px}.heading{display:flex;gap:9px;align-items:center;font-size:13px;font-weight:700;margin:2px 0 9px}.heading small{font-size:11px;font-weight:400;color:#9299aa}.answer{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.82;color:#424b60}.answer strong{color:#172033}.actions{display:flex;gap:14px;margin-top:10px}.actions button{border:0;background:none;color:#9299aa;font-size:11px;padding:2px 0}.typing{display:flex;gap:5px;padding:8px 0 12px}.typing i{width:7px;height:7px;border-radius:50%;background:#8179e9;animation:bounce .8s infinite ease-in-out}.typing i:nth-child(2){animation-delay:.13s}.typing i:nth-child(3){animation-delay:.26s}@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-5px);opacity:1}}.bottom{flex:none;padding:12px 15px max(14px,env(safe-area-inset-bottom));background:linear-gradient(#fafafd00,#fafafd 15%);z-index:3}.composer{border:1px solid var(--line);border-radius:27px;background:white;padding:10px;box-shadow:0 8px 32px #19234610}.composer textarea{width:100%;min-height:52px;max-height:110px;resize:none;border:0;outline:0;background:transparent;padding:5px 7px;font-size:14px;line-height:1.6;color:var(--ink)}textarea::placeholder{color:#8c95a9}.row{display:flex;align-items:center;gap:8px}.circle{width:40px;height:40px;border:1px solid #e6e8ef;border-radius:50%;background:#f6f7fa;color:#263044;display:grid;place-items:center;flex:none}.modelwrap{position:relative}.modelbtn{height:39px;display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid var(--line);border-radius:99px;background:white;font-size:12px;white-space:nowrap}.spacer{flex:1}.send{width:44px;height:44px;border:0;border-radius:50%;background:#111827;color:white;display:grid;place-items:center;flex:none}.send:disabled{opacity:.4}.menu,.tools{position:absolute;bottom:48px;left:0;width:145px;padding:5px;border:1px solid var(--line);border-radius:15px;background:white;box-shadow:0 12px 30px #17203320;z-index:8}.menu button,.tools button{display:block;width:100%;text-align:left;padding:10px;border:0;border-radius:10px;background:white;font-size:12px}.menu button:hover,.tools button:hover{background:#f4f4fb}.selected{color:var(--blue);font-weight:700}.disclaimer{text-align:center;color:#a0a5b3;font-size:9px;margin:8px 0 0}.notice{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px;padding:9px 11px;border-radius:12px;background:#20263a;color:white;font-size:12px}.notice button{border:0;background:none;color:white}.overlay{position:absolute;inset:0;z-index:10;display:flex;background:#11182755}.drawer{width:78%;max-width:300px;background:white;padding:20px;display:flex;flex-direction:column;box-shadow:10px 0 30px #0001}.dhead{display:flex;align-items:center;justify-content:space-between;margin:2px 0 28px;font-weight:700}.item{padding:13px;border:0;border-radius:12px;background:transparent;text-align:left;font-size:13px}.item:hover{background:#f4f5fa}.label{margin:25px 0 8px 10px;color:#9aa0b0;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.promo{margin-top:auto;padding:15px;border-radius:17px;background:linear-gradient(135deg,#f0f0ff,#f4eaff)}.promo strong{display:block;font-size:13px;margin:8px 0 5px}.promo p{font-size:11px;line-height:1.6;color:#707991}.promo button{border:0;background:none;color:var(--blue);font-size:12px;font-weight:700}.hidden{display:none!important}
-@media(min-width:600px){body{padding:24px}.app{height:min(900px,calc(100dvh - 48px));max-width:440px;margin:auto;border:1px solid white;border-radius:35px;box-shadow:0 24px 90px #191e3d29}.top{border-radius:34px 34px 0 0}}
-@media(max-height:700px){.home{justify-content:flex-start;padding-top:15px}.logo{width:58px;height:58px;margin-bottom:12px}.logo svg{width:35px;height:35px}.intro{margin:9px 0 18px}.card{min-height:112px;padding:11px}.ci{margin-bottom:8px}}
+(() => {
+  const $ = id => document.getElementById(id);
+  const STORE = "kitto-chats-v1";
+
+  let chats = [];
+  let activeId = null;
+  let typing = false;
+  let model = "Quantum 3";
+
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  }[c]));
+
+  function loadChats() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORE) || "[]");
+      chats = Array.isArray(saved) ? saved : [];
+    } catch {
+      chats = [];
+    }
+  }
+
+  function saveChats() {
+    try {
+      localStorage.setItem(STORE, JSON.stringify(chats.slice(-30)));
+    } catch {
+      notice("Couldn't save chat history on this device.");
+    }
+  }
+
+  function currentChat() {
+    return chats.find(c => c.id === activeId);
+  }
+
+  function createChat() {
+    const chat = {
+      id: String(Date.now()) + Math.random().toString(36).slice(2, 7),
+      title: "New chat",
+      messages: []
+    };
+    chats.unshift(chat);
+    activeId = chat.id;
+    saveChats();
+    render();
+  }
+
+  function notice(message) {
+    $("noticeText").textContent = message;
+    $("notice").classList.remove("hidden");
+  }
+
+  function render() {
+    const chat = currentChat();
+    const messages = chat?.messages || [];
+    const empty = messages.length === 0 && !typing;
+
+    $("home").classList.toggle("hidden", !empty);
+    $("chat").classList.toggle("hidden", empty);
+    $("chat").innerHTML = messages.map((m, i) => {
+      if (m.role === "user") {
+        return `<div class="userrow"><div class="bubble">${esc(m.text)}</div></div>`;
+      }
+
+      return `<div class="airow">
+        <span class="avatar sm"><span class="eyes"><i></i><i></i></span></span>
+        <div class="content">
+          <div class="heading">Kitto AI <small>AI response</small></div>
+          <div class="answer">${esc(m.text)}</div>
+          <div class="actions">
+            <button data-copy="${i}">Copy</button>
+          </div>
+        </div>
+      </div>`;
+    }).join("") + (typing ? `
+      <div class="airow">
+        <span class="avatar sm"><span class="eyes"><i></i><i></i></span></span>
+        <div class="content">
+          <div class="heading">Kitto AI <small>Thinking…</small></div>
+          <div class="typing"><i></i><i></i><i></i></div>
+        </div>
+      </div>` : "");
+
+    $("send").disabled = typing;
+    $("main").scrollTop = $("main").scrollHeight;
+  }
+
+  function resize() {
+    const input = $("prompt");
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 110) + "px";
+    $("sendIcon").textContent = input.value.trim() ? "↑" : "➤";
+  }
+
+  async function send(value) {
+    const question = (value === undefined ? $("prompt").value : value).trim();
+    if (!question || typing) return;
+
+    if (!window.NIMBU_SUPABASE) {
+      notice("Supabase isn't loaded. Check the Supabase scripts.");
+      return;
+    }
+
+    if (!currentChat()) createChat();
+
+    const chat = currentChat();
+    chat.messages.push({ role: "user", text: question });
+
+    if (chat.title === "New chat") {
+      chat.title = question.slice(0, 45);
+    }
+
+    $("prompt").value = "";
+    resize();
+    typing = true;
+    saveChats();
+    render();
+
+    try {
+      const { data, error } = await window.NIMBU_SUPABASE
+        .functions.invoke("swift-endpoint", {
+          body: { question }
+        });
+
+      if (error) throw error;
+
+      const answer = data?.answer;
+      if (typeof answer !== "string" || !answer.trim()) {
+        throw new Error("The AI returned an empty response.");
+      }
+
+      chat.messages.push({ role: "assistant", text: answer });
+      saveChats();
+    } catch (error) {
+      console.error("KITTO AI error:", error);
+      chat.messages.push({
+        role: "assistant",
+        text: "I couldn't get a response from the AI right now. Please check your connection and try again."
+      });
+      saveChats();
+    } finally {
+      typing = false;
+      render();
+    }
+  }
+
+  function showHistory() {
+    const drawer = document.querySelector(".drawer");
+    if (!drawer) return;
+
+    let section = $("kittoHistoryList");
+    if (!section) {
+      section = document.createElement("div");
+      section.id = "kittoHistoryList";
+      section.innerHTML = '<div class="label">Recent chats</div>';
+      const promo = drawer.querySelector(".promo");
+      drawer.insertBefore(section, promo);
+    }
+
+    section.querySelectorAll(".kitto-history-item").forEach(el => el.remove());
+
+    chats.forEach(chat => {
+      const button = document.createElement("button");
+      button.className = "item kitto-history-item";
+      button.textContent = chat.title || "New chat";
+      button.style.width = "100%";
+      button.onclick = () => {
+        activeId = chat.id;
+        $("overlay").classList.add("hidden");
+        render();
+      };
+      section.appendChild(button);
+    });
+  }
+
+  document.querySelectorAll("[data-prompt]").forEach(button => {
+    button.onclick = () => send(button.dataset.prompt);
+  });
+
+  $("send").onclick = () => send();
+  $("prompt").addEventListener("input", resize);
+  $("prompt").addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      send();
+    }
+  });
+
+  $("openMenu").onclick = () => {
+    showHistory();
+    $("overlay").classList.remove("hidden");
+  };
+
+  $("closeMenu").onclick = $("shade").onclick = () =>
+    $("overlay").classList.add("hidden");
+
+  $("newChat").onclick = () => {
+    createChat();
+    $("overlay").classList.add("hidden");
+    $("prompt").focus();
+  };
+
+  $("history").onclick = () => {
+    showHistory();
+    notice("Choose a conversation from Recent chats.");
+  };
+
+  $("settings").onclick = () => notice("Settings are not connected yet.");
+  $("upgrade").onclick = () => notice("Paid plans aren't configured yet.");
+  $("profile").onclick = () => notice("KITTO AI · Your AI workspace");
+  $("plans").onclick = () => notice("Upgrade options aren't configured yet.");
+  $("noticeX").onclick = () => $("notice").classList.add("hidden");
+
+  $("modelBtn").onclick = () => {
+    $("models").classList.toggle("hidden");
+  };
+
+  $("models").querySelectorAll("[data-model]").forEach(button => {
+    button.onclick = () => {
+      model = button.dataset.model;
+      $("modelName").textContent = model;
+      $("models").classList.add("hidden");
+      notice("Display preference updated. The backend model stays unchanged.");
+    };
+  });
+
+  $("toolsBtn").onclick = () => $("tools").classList.toggle("hidden");
+  $("attach").onclick = () => notice("File analysis isn't connected yet.");
+  $("explore").onclick = () => notice("More tools can be integrated next.");
+
+  $("mic").onclick = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      notice("Voice input isn't supported in this browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-IN";
+    recognition.onresult = event => {
+      $("prompt").value = event.results[0][0].transcript;
+      resize();
+      $("prompt").focus();
+    };
+    recognition.onerror = () => notice("Voice input failed. Please try again.");
+    recognition.start();
+    notice("Listening… speak now.");
+  };
+
+  $("chat").addEventListener("click", async event => {
+    const button = event.target.closest("[data-copy]");
+    if (!button) return;
+
+    const message = currentChat()?.messages[Number(button.dataset.copy)];
+    if (!message) return;
+
+    try {
+      await navigator.clipboard.writeText(message.text);
+      notice("Copied to clipboard.");
+    } catch {
+      notice("Copy isn't available in this browser.");
+    }
+  });
+
+  document.addEventListener("click", event => {
+    if (!$("models").contains(event.target) &&
+        !$("modelBtn").contains(event.target)) {
+      $("models").classList.add("hidden");
+    }
+
+    if (!$("tools").contains(event.target) &&
+        !$("toolsBtn").contains(event.target)) {
+      $("tools").classList.add("hidden");
+    }
+  });
+
+  loadChats();
+
+  if (chats.length) {
+    activeId = chats[0].id;
+  } else {
+    createChat();
+  }
+
+  resize();
+  render();
+})();
+
 </style>
 </head>
 <body>
@@ -55,8 +342,7 @@ $("toolsBtn").onclick=()=>$("tools").classList.toggle("hidden");$("attach").oncl
 $("mic").onclick=()=>{let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){notice("Voice input isn't supported here; please type instead.");return}let r=new SR();r.lang="en-IN";r.onresult=e=>{$("prompt").value=e.results[0][0].transcript;resize()};r.onerror=()=>notice("Couldn't hear that. Try again.");r.start();notice("Listening… speak now.")};
 $("history").onclick=()=>{notice("Chat history isn't saved in this demo yet.");$("overlay").classList.add("hidden")};$("settings").onclick=()=>{notice("Settings can be added next.");$("overlay").classList.add("hidden")};$("plans").onclick=()=>{notice("Upgrade options can be added here.");$("overlay").classList.add("hidden")};
 $("chat").addEventListener("click",async e=>{let b=e.target.closest("[data-copy]");if(b){let m=messages.find(x=>String(x.id)===b.dataset.copy);try{await navigator.clipboard.writeText(m.text);notice("Response copied.")}catch{notice("Copy is unavailable in this browser.")}}if(e.target.closest("[data-helpful]"))notice("Thanks for your feedback!")});
-document.addEventListener("click",e=>{if(!$("models").contains(e.target)&&!$("modelBtn").contains(e.target))$("models").classList.add("hidden");if(!$("tools").contains(e.target)&&!$("toolsBtn").contains(e.target))$("tools").classList.add("hidden")});resize();render();
-})();
+document.addEventListener("click",e=>{if(!$("models").contains(e.target)&&!$("modelBtn").contains(e.target))$("models").classList.add("hidden");if(!$("tools").contains(e.target)&&!$("toolsBtn").contains(e.target))$("tools").classList.add("hidden")})
 </script>
 
 /* KITTO AI — Rainbow Wave Theme */

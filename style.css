@@ -1202,3 +1202,85 @@ html.is-app #app.is-home .aud-grid,html.is-app #app.is-home .chips{display:flex;
 html.is-app #app.is-home .aud-grid::-webkit-scrollbar,html.is-app #app.is-home .chips::-webkit-scrollbar{display:none}
 html.is-app #app.is-home .aud{flex:0 0 68%;max-width:270px;scroll-snap-align:start}
 html.is-app #app.is-home .chips > *{flex:0 0 auto;scroll-snap-align:start}
+/* ===== NIMBU APP MODE v3: splash, bigger type, app home ===== */
+#splash{display:none}
+html.is-app #splash{display:flex;position:fixed;inset:0;z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;color:#fff;background:radial-gradient(circle at 50% 38%,#3a2f10 0,#14152a 45%,#0a0b16 100%);transition:opacity .4s ease,transform .4s ease}
+html.is-app #splash.out{opacity:0;transform:scale(1.04);pointer-events:none}
+html.splash-on{overflow:hidden}
+.sp-svg{width:min(74vw,320px);height:auto;overflow:visible}
+.sp-lemon{transform-origin:120px 110px;animation:spPop .55s cubic-bezier(.2,.9,.3,1.25) both}
+.sp-half{transform-origin:120px 110px}
+.sp-top{animation:spTop .5s 1.02s cubic-bezier(.2,.8,.2,1) both}
+.sp-bot{animation:spBot .5s 1.02s cubic-bezier(.2,.8,.2,1) both}
+.sp-face{opacity:0;animation:spFace .35s 1.05s ease both}
+.sp-knife{opacity:0;animation:spKnife .85s .45s linear both}
+.sp-cut{stroke-dasharray:176;stroke-dashoffset:176;animation:spCut .39s .63s linear forwards,spGone .2s 1.02s ease forwards}
+.sp-drop{opacity:0;animation:spDrop .9s var(--d,1.05s) ease-out both}
+.sp-word{font:800 3.1rem/1 Georgia,serif;letter-spacing:-.04em;animation:spRise .6s 1.3s ease both}
+.sp-tag{font:700 .72rem/1 system-ui,sans-serif;letter-spacing:.32em;color:#c9ccea;animation:spRise .6s 1.55s ease both}
+.sp-bar{position:absolute;left:50%;bottom:max(34px,env(safe-area-inset-bottom));width:120px;height:3px;margin-left:-60px;border-radius:9px;background:rgba(255,255,255,.14);overflow:hidden}
+.sp-bar::after{content:"";display:block;height:100%;background:#FFB800;transform:translateX(-100%);animation:spBar 2.5s linear forwards}
+@keyframes spPop{from{opacity:0;transform:scale(.5) rotate(-14deg)}to{opacity:1;transform:none}}
+@keyframes spTop{to{transform:translateY(-16px) rotate(-4deg)}}
+@keyframes spBot{to{transform:translateY(16px) rotate(4deg)}}
+@keyframes spFace{from{opacity:0}to{opacity:1}}
+@keyframes spKnife{0%{opacity:0;transform:translateX(-40px)}10%{opacity:1;transform:translateX(0)}80%{opacity:1;transform:translateX(280px)}100%{opacity:0;transform:translateX(330px)}}
+@keyframes spCut{to{stroke-dashoffset:0}}
+@keyframes spGone{to{opacity:0}}
+@keyframes spDrop{0%{opacity:0;transform:translate(0,0) scale(.6)}30%{opacity:1;transform:translate(var(--dx,0),-30px) scale(1)}100%{opacity:0;transform:translate(calc(var(--dx,0)*1.7),22px) scale(.8)}}
+@keyframes spRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes spBar{to{transform:translateX(0)}}
+
+/* bigger text and touch targets (48px+ with 10px+ gaps) */
+html.is-app body{font-size:17px;line-height:1.6;padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+html.is-app main{padding:18px 16px 28px}
+html.is-app h1{font-size:clamp(1.7rem,7.5vw,2.1rem);line-height:1.2}
+html.is-app h2{font-size:1.35rem}
+html.is-app p{font-size:1.02rem}
+html.is-app button,html.is-app .btn,html.is-app select,html.is-app input,html.is-app textarea{min-height:52px;font-size:1.02rem}
+html.is-app .small{min-height:48px;padding:8px 14px;font-size:.98rem}
+html.is-app .chip{min-height:48px;padding:8px 18px;font-size:1rem}
+html.is-app .chips{gap:10px}
+html.is-app .card{padding:20px;gap:12px}
+html.is-app .card h3{font-size:1.25rem}
+html.is-app .card p{font-size:1.02rem;line-height:1.65}
+html.is-app .card .row{gap:10px}
+html.is-app .badge{font-size:.85rem;padding:4px 10px}
+html.is-app header.top{min-height:62px}
+html.is-app header.top button{min-width:48px;min-height:48px}
+html.is-app .logo{font-size:1.6rem}
+html.is-app #tabbar a,html.is-app #tabbar button{min-height:62px;font-size:.8rem}
+html.is-app #tabbar i{font-size:1.6rem}
+html.is-app .drawer-box a{min-height:56px;font-size:1.06rem}
+html.is-app .d-foot button,html.is-app .d-foot select{min-height:52px}
+
+/* app home */
+html.is-app .am-hero{padding:6px 0 4px}
+html.is-app .am-greet{margin:0;color:var(--muted);font-weight:700}
+html.is-app .am-hero h1{margin:4px 0 16px;font-family:Georgia,serif;letter-spacing:-.03em}
+.am-search{display:flex;gap:10px}
+.am-search input{flex:1;min-width:0;min-height:56px;border-radius:16px;font-size:1.05rem}
+.am-search button{min-width:60px;min-height:56px;border-radius:16px;font-size:1.3rem}
+html.is-app .chips.scroll{flex-wrap:nowrap;overflow-x:auto;margin:14px -16px 0;padding:0 16px 6px;scrollbar-width:none}
+.chips.scroll::-webkit-scrollbar{display:none}
+.chips.scroll>*{flex:0 0 auto}
+html.is-app #app.is-home h2.sec{margin:28px 0 12px;padding:0;border:0;font-size:1.3rem}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{display:flex;flex-direction:column;justify-content:center;gap:8px;min-height:104px;padding:16px;border-radius:20px;background:var(--panel);border:1px solid var(--line);color:var(--text);text-decoration:none;box-shadow:var(--shadow);transition:transform .15s ease}
+.tile:active{transform:scale(.97)}
+.tile .ai{font-size:2rem;line-height:1}
+.tile b{font-size:1.08rem}
+.hrow{display:flex;gap:12px;overflow-x:auto;margin:0 -16px;padding:2px 16px 8px;scroll-snap-type:x proximity;scrollbar-width:none}
+.hrow::-webkit-scrollbar{display:none}
+.atile{flex:0 0 150px;scroll-snap-align:start;display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:18px;background:var(--panel);border:1px solid var(--line);color:var(--text);text-decoration:none;box-shadow:var(--shadow)}
+.atile b{font-size:1.02rem;line-height:1.3}
+.atile small{color:var(--muted)}
+.atile .tlogo{width:48px;height:48px;border-radius:14px}
+.arows{display:grid;gap:10px}
+.arow{display:flex;align-items:center;gap:14px;min-height:72px;padding:14px 16px;border-radius:18px;background:var(--panel);border:1px solid var(--line);color:var(--text);text-decoration:none}
+.arow:active{background:var(--surface-hover)}
+.arow .ai{font-size:1.7rem;width:40px;text-align:center}
+.arow .at{flex:1;display:flex;flex-direction:column}
+.arow .at b{font-size:1.08rem}
+.arow .at small{color:var(--muted);font-size:.92rem}
+.arow>i{font-style:normal;font-size:1.6rem;color:var(--muted)}

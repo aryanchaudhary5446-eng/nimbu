@@ -127,7 +127,148 @@ footer {
 </footer>
 <div class="overlay hidden" id="overlay"><aside class="drawer"><div class="dhead"><span style="display:flex;align-items:center;gap:10px"><span class="avatar sm"><span class="eyes"><i></i><i></i></span></span>Kitto AI</span><button class="ib" id="closeMenu">✕</button></div><button class="item" id="newChat">＋　New chat</button><div class="label">Workspace</div><button class="item" id="history">▤　Chat history</button><button class="item" id="settings">⚙　Settings</button><div class="promo"><span style="color:#514de8;font-size:20px">✧</span><strong>Get more with Kitto</strong><p>Explore more ways to learn, build and create.</p><button id="plans">Explore plans →</button></div></aside><div id="shade" style="flex:1"></div></div>
 </div>
+
 <script>
+"use strict";
 
+const $ = id => document.getElementById(id);
+let messages = [];
+let chats = JSON.parse(localStorage.getItem("kitto-chats-v1") || "[]");
+let busy = false;
 
-</body></html>
+function saveChats() {
+  localStorage.setItem("kitto-chats-v1", JSON.stringify(chats));
+}
+
+function addMessage(role, text) {
+  messages.push({ role, content: text });
+
+  const chat = $("chat");
+  if (!chat) return;
+
+  const item = document.createElement("div");
+  item.className = "card";
+  const label = document.createElement("strong");
+  label.textContent = role === "user" ? "You" : "KITTO AI";
+  const content = document.createElement("p");
+  content.textContent = text;
+  content.style.whiteSpace = "pre-wrap";
+  item.append(label, content);
+
+  chat.appendChild(item);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+async function sendMessage(text) {
+  text = (text || "").trim();
+  if (!text || busy) return;
+
+  busy = true;
+  const prompt = $("prompt");
+  const send = $("send");
+
+  if (prompt) prompt.value = "";
+  if (send) send.disabled = true;
+
+  addMessage("user", text);
+
+  const chat = $("chat");
+  const typing = document.createElement("div");
+  typing.className = "card";
+  typing.textContent = "KITTO AI is thinking...";
+  if (chat) chat.appendChild(typing);
+
+  try {
+    if (!window.NIMBU_SUPABASE) {
+      throw new Error("Supabase is not connected. Check supabase.js.");
+    }
+
+    const { data, error } =
+      await window.NIMBU_SUPABASE.functions.invoke(
+        "swift-endpoint",
+        { body: { question: text } }
+      );
+
+    if (error) throw error;
+
+    const answer = data && data.answer;
+    if (!answer) throw new Error("The AI returned an empty answer.");
+
+    typing.remove();
+    addMessage("assistant", answer);
+
+    chats.unshift({
+      title: text.slice(0, 50),
+      messages: messages.slice(),
+      date: new Date().toISOString()
+    });
+    chats = chats.slice(0, 30);
+    saveChats();
+  } catch (err) {
+    typing.textContent =
+      "Sorry bro, I couldn't get a response. Check your internet connection and Supabase Edge Function. " +
+      (err.message || "");
+  } finally {
+    busy = false;
+    if (send) send.disabled = false;
+    if (prompt) prompt.focus();
+  }
+}
+
+const form = $("prompt") && $("prompt").closest("form");
+
+if (form) {
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    sendMessage($("prompt").value);
+  });
+}
+
+if ($("send")) {
+  $("send").addEventListener("click", event => {
+    if (!form) {
+      event.preventDefault();
+      sendMessage($("prompt")?.value);
+    }
+  });
+}
+
+document.querySelectorAll("[data-prompt]").forEach(button => {
+  button.addEventListener("click", () => {
+    const text =
+      button.dataset.prompt ||
+      button.textContent.trim();
+
+    if ($("prompt")) $("prompt").value = text;
+    sendMessage(text);
+  });
+});
+
+if ($("newChat")) {
+  $("newChat").addEventListener("click", () => {
+    messages = [];
+    if ($("chat")) $("chat").replaceChildren();
+    if ($("prompt")) $("prompt").value = "";
+    if ($("home")) $("home").hidden = false;
+  });
+}
+
+if ($("history")) {
+  $("history").textContent = "Recent chats are saved on this device.";
+}
+
+if ($("mic") && "webkitSpeechRecognition" in window) {
+  $("mic").addEventListener("click", () => {
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = "en-IN";
+    recognition.onresult = event => {
+      $("prompt").value = event.results[0][0].transcript;
+    };
+    recognition.start();
+  });
+}
+
+console.log("KITTO AI initialized");
+</script>
+</body>
+</html>

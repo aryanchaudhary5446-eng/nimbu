@@ -11,6 +11,7 @@
 try{var q=location.search,s=sessionStorage;if(/[?&]app=1/.test(q))s.setItem("nimbu.appmode","1");if(/[?&]app=0/.test(q))s.removeItem("nimbu.appmode");if(matchMedia("(display-mode: standalone)").matches||navigator.standalone||s.getItem("nimbu.appmode")==="1")document.documentElement.classList.add("is-app")}catch(e){}
 </script>
 <link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet"href="kitto-widget.css?v=1">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#FFB800">
 <link rel="icon" href="icon.svg" type="image/svg+xml">

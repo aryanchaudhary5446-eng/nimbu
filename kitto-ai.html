@@ -58,4 +58,73 @@ $("chat").addEventListener("click",async e=>{let b=e.target.closest("[data-copy]
 document.addEventListener("click",e=>{if(!$("models").contains(e.target)&&!$("modelBtn").contains(e.target))$("models").classList.add("hidden");if(!$("tools").contains(e.target)&&!$("toolsBtn").contains(e.target))$("tools").classList.add("hidden")});resize();render();
 })();
 </script>
+
+/* KITTO AI — Rainbow Wave Theme */
+body {
+  background: linear-gradient(120deg,
+    #ffb3d9, #c7b8ff, #a8eaff, #b8ffd9, #fff0a8, #ffb3d9);
+  background-size: 350% 350%;
+  animation: kittoRainbow 14s ease infinite;
+}
+
+.app {
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,.88),
+    rgba(247,240,255,.82),
+    rgba(231,249,255,.86)
+  );
+  backdrop-filter: blur(18px);
+}
+
+.top {
+  background: rgba(255,255,255,.72);
+  border-bottom-color: rgba(255,255,255,.65);
+}
+
+.logo, .avatar {
+  background: linear-gradient(
+    135deg, #ff70c8, #a078ff, #55dfff, #65efbd, #ffe16b
+  );
+  background-size: 300% 300%;
+  animation: kittoRainbow 7s ease infinite;
+}
+
+.logo {
+  box-shadow: 0 10px 35px rgba(173, 100, 255, .24);
+}
+
+.eyes {
+  background: #20213d;
+  box-shadow: 0 0 12px rgba(112, 105, 255, .45);
+}
+
+.eyes i {
+  position: relative;
+  animation: kittoLook 5s ease-in-out infinite;
+}
+
+.eyes i:nth-child(2) {
+  animation-delay: .35s;
+}
+
+@keyframes kittoRainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes kittoLook {
+  0%, 15%, 100% { transform: translate(0, 0); }
+  25%, 35% { transform: translate(2px, -1px); }
+  50%, 60% { transform: translate(-2px, 1px); }
+  75%, 85% { transform: translate(0, -1px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body, .logo, .avatar, .eyes i {
+    animation: none;
+  }
+}
+
 </body></html>

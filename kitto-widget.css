@@ -1,0 +1,311 @@
+
+/* KITTO AI floating companion */
+#kitto-launcher {
+  position: fixed;
+  right: 18px;
+  bottom: 88px;
+  z-index: 9998;
+  width: 64px;
+  height: 64px;
+  border: 1px solid #58e9ff;
+  border-radius: 50%;
+  cursor: pointer;
+  background: radial-gradient(circle at 30% 20%, #393d91, #10152f 70%);
+  box-shadow: 0 0 18px #5b61ff88, 0 0 34px #00d9ff33;
+  animation: kitto-float 3s ease-in-out infinite;
+}
+
+#kitto-launcher .kitto-face,
+#kitto-header .kitto-face,
+.kitto-message-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 50%;
+  background: #080d20;
+  border: 2px solid #62eaff;
+  box-shadow: inset 0 0 12px #6548ff88, 0 0 12px #3bdcff88;
+}
+
+#kitto-launcher .kitto-face {
+  width: 42px;
+  height: 32px;
+  margin: auto;
+}
+
+.kitto-eye {
+  width: 9px;
+  height: 13px;
+  border-radius: 50%;
+  background: #66f3ff;
+  box-shadow: 0 0 8px #66f3ff;
+  animation: kitto-look 4s ease-in-out infinite;
+}
+
+#kitto-launcher:hover {
+  transform: scale(1.08);
+}
+
+#kitto-launcher:focus-visible,
+#kitto-send:focus-visible,
+#kitto-close:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+
+#kitto-panel {
+  position: fixed;
+  z-index: 9999;
+  right: 18px;
+  bottom: 164px;
+  width: min(390px, calc(100vw - 28px));
+  height: min(590px, calc(100dvh - 190px));
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  color: #f4f7ff;
+  background: #0b1020;
+  border: 1px solid #343d69;
+  border-radius: 24px;
+  box-shadow: 0 20px 70px #000a, 0 0 30px #5145ff22;
+  font-family: system-ui, sans-serif;
+}
+
+#kitto-panel.kitto-open {
+  display: flex;
+  animation: kitto-enter .22s ease-out;
+}
+
+#kitto-header {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 15px;
+  background: linear-gradient(110deg, #171c3b, #10172b);
+  border-bottom: 1px solid #293253;
+}
+
+#kitto-header .kitto-face {
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+}
+
+#kitto-header .kitto-eye {
+  width: 7px;
+  height: 10px;
+}
+
+#kitto-title {
+  flex: 1;
+  font-weight: 750;
+  font-size: 15px;
+}
+
+#kitto-status {
+  margin-top: 3px;
+  color: #79e8bd;
+  font-size: 11px;
+}
+
+#kitto-close {
+  border: 0;
+  background: transparent;
+  color: #dfe7ff;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+#kitto-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 15px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  overscroll-behavior: contain;
+}
+
+.kitto-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.kitto-row.kitto-user {
+  justify-content: flex-end;
+}
+
+.kitto-message-avatar {
+  flex: 0 0 27px;
+  width: 27px;
+  height: 27px;
+  gap: 3px;
+}
+
+.kitto-message-avatar .kitto-eye {
+  width: 4px;
+  height: 7px;
+}
+
+.kitto-bubble {
+  max-width: 83%;
+  padding: 11px 13px;
+  border: 1px solid #293456;
+  border-radius: 17px 17px 17px 5px;
+  background: #151d34;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.kitto-user .kitto-bubble {
+  color: white;
+  background: linear-gradient(135deg, #4147d8, #6544e9);
+  border-color: #7776ff;
+  border-radius: 17px 17px 5px 17px;
+}
+
+#kitto-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 0 12px 10px;
+}
+
+.kitto-suggestion {
+  border: 1px solid #424d8b;
+  border-radius: 18px;
+  background: #151b36;
+  color: #dce7ff;
+  padding: 7px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+#kitto-form {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  padding: 12px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  border-top: 1px solid #293253;
+  background: #0d1325;
+}
+
+#kitto-input {
+  flex: 1;
+  min-width: 0;
+  max-height: 110px;
+  resize: none;
+  border: 1px solid #303c67;
+  border-radius: 18px;
+  padding: 12px;
+  color: #fff;
+  background: #141c33;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+#kitto-input:focus {
+  border-color: #67dfff;
+  box-shadow: 0 0 0 2px #46dfff22;
+}
+
+#kitto-send {
+  width: 43px;
+  height: 43px;
+  flex: 0 0 43px;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00c8ef, #7544ff);
+  color: white;
+  font-size: 21px;
+  cursor: pointer;
+}
+
+#kitto-send:disabled {
+  opacity: .5;
+  cursor: wait;
+}
+
+/* Three animated dots: no "Kitto is thinking" text */
+.kitto-typing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 55px;
+  min-height: 25px;
+}
+
+.kitto-typing span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #50eaff;
+  animation: kitto-dot .9s infinite ease-in-out;
+}
+
+.kitto-typing span:nth-child(2) { animation-delay: .15s; }
+.kitto-typing span:nth-child(3) { animation-delay: .3s; }
+
+@keyframes kitto-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: .45; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+@keyframes kitto-look {
+  0%, 18%, 100% { transform: translateX(0); }
+  25%, 38% { transform: translateX(3px); }
+  45%, 57% { transform: translateX(-3px); }
+  65%, 85% { transform: translateX(0); }
+}
+
+@keyframes kitto-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -7px; }
+}
+
+@keyframes kitto-enter {
+  from { opacity: 0; transform: translateY(12px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 600px) {
+  #kitto-launcher {
+    right: 15px;
+    bottom: 82px;
+    width: 58px;
+    height: 58px;
+  }
+
+  #kitto-panel {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    border-radius: 0;
+    border: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  #kitto-panel.kitto-open {
+    animation: kitto-enter .18s ease-out;
+  }
+
+  #kitto-header {
+    padding-top: max(15px, env(safe-area-inset-top));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #kitto-launcher,
+  .kitto-eye,
+  .kitto-typing span {
+    animation: none;
+  }
+}

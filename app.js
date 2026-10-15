@@ -674,6 +674,7 @@ color: var(--text, inherit);
   }
 }
 
+
 /* ---------- Reveal animations ---------- */
 
 function reveal(isNew) {

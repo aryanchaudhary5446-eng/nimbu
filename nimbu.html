@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="en" data-theme="midnight">
 <head>
+<script>
+window.addEventListener("error",function(e){
+ var t=e.target,m=(t&&(t.src||t.href)&&t!==window)?"FILE NOT LOADED: "+(t.src||t.href).split("/").pop():e.message+" ("+String(e.filename||"").split("/").pop()+":"+e.lineno+")";
+ var b=document.getElementById("errbox");
+ if(!b){b=document.createElement("pre");b.id="errbox";b.style.cssText="position:fixed;left:0;right:0;top:0;z-index:99999;margin:0;padding:10px;background:#900;color:#fff;font:13px/1.4 monospace;white-space:pre-wrap;max-height:50vh;overflow:auto";(document.body||document.documentElement).appendChild(b);}
+ b.textContent+="• "+m+"\n";
+},true);
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NIMBU: Every AI. One Universe.</title>

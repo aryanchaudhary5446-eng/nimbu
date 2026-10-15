@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-debate-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101020">
+  <title>NIMBU Debate Room</title>
+  <meta name="description" content="Compare different AI perspectives and build a clearer, more reasoned conclusion.">
+  <link rel="stylesheet" href="debate.css">
+  <script defer src="debate-config.js"></script>
+  <script defer src="debate.js"></script>
+</head>
+<body class="ndr-body">
+  <main class="ndr-shell" id="debateApp">
+    <header class="ndr-topbar">
+      <a class="ndr-brand" href="./nimbu.html#/" aria-label="NIMBU home"><span class="ndr-brand-mark">N</span><span>NIMBU <small>DEBATE ROOM</small></span></a>
+      <div class="ndr-top-actions"><span class="ndr-mode"><i></i> DEMO SIMULATION</span><button class="ndr-icon-btn" type="button" data-action="theme" aria-label="Toggle light theme">☼</button></div>
+    </header>
+    <section class="ndr-hero">
+      <div class="ndr-eyebrow"><span class="ndr-pulse"></span> MULTI-PERSPECTIVE REASONING</div>
+      <h1>One question.<br><span>Multiple minds.</span><br>A clearer answer.</h1>
+      <p>Let different perspectives challenge the same problem. Compare the reasoning, spot the gaps, and decide what holds up.</p>
+      <div class="ndr-hero-stats"><span><b>04</b> specialist personas</span><span><b>02</b> max critique rounds</span><span><b>01</b> reasoned report</span></div>
+    </section>
+
+    <section class="ndr-composer ndr-panel" aria-labelledby="ndr-question-title">
+      <div class="ndr-section-head"><div><span class="ndr-kicker">01 / THE QUESTION</span><h2 id="ndr-question-title">What should the council debate?</h2></div><span class="ndr-step">START HERE</span></div>
+      <form id="ndr-form">
+        <label class="ndr-sr-only" for="ndr-question">Your debate question</label>
+        <textarea id="ndr-question" maxlength="1200" required placeholder="Example: Should a student build an AI startup while studying engineering?" rows="3"></textarea>
+        <div class="ndr-composer-bottom"><span id="ndr-char-count">0 / 1200</span><button class="ndr-primary" type="submit"><span>Start debate</span><span aria-hidden="true">↗</span></button></div>
+      </form>
+      <div class="ndr-examples"><span>TRY A TOPIC</span><button type="button" data-example="Should I focus on DSA or building AI projects in my first year?">Career</button><button type="button" data-example="Is an AI WhatsApp sales assistant a viable small business?">Startup</button><button type="button" data-example="Should colleges make AI tools a required part of learning?">Education</button><button type="button" data-example="What is a responsible way to use AI for scientific research?">Science</button></div>
+      <div class="ndr-settings"><label for="ndr-mode-select">Debate depth <select id="ndr-mode-select"><option value="quick">Quick — independent answers</option><option value="balanced" selected>Balanced — one critique round</option><option value="thorough">Thorough — two critique rounds</option></select></label><label class="ndr-checkbox"><input type="checkbox" id="ndr-save-toggle" checked> Save to this device</label></div>
+      <p class="ndr-disclaimer"><strong>Demo mode:</strong> the personas below are illustrative, locally generated simulations—not live AI model calls or verified research.</p>
+    </section>
+
+    <section class="ndr-council-section" aria-labelledby="ndr-council-title">
+      <div class="ndr-section-head"><div><span class="ndr-kicker">02 / THE COUNCIL</span><h2 id="ndr-council-title">Four perspectives. No single voice wins by default.</h2></div><span class="ndr-status" id="ndr-debate-status">Awaiting question</span></div>
+      <div class="ndr-persona-strip" id="ndr-personas"></div>
+      <div class="ndr-response-grid" id="ndr-responses"><div class="ndr-empty ndr-panel"><div class="ndr-empty-icon">◎</div><h3>Your debate starts here</h3><p>Submit a question to reveal four separate perspectives, then run critiques and generate a consensus report.</p></div></div>
+    </section>
+
+    <section class="ndr-timeline-section ndr-panel" aria-labelledby="ndr-timeline-title">
+      <div class="ndr-section-head"><div><span class="ndr-kicker">03 / THE PROCESS</span><h2 id="ndr-timeline-title">Debate timeline</h2></div><button class="ndr-quiet-btn" type="button" data-action="reset">New debate ↗</button></div>
+      <ol class="ndr-timeline" id="ndr-timeline"><li class="is-current"><span>01</span><div><b>Question submitted</b><small>Waiting for your question</small></div></li><li><span>02</span><div><b>Independent positions</b><small>Each persona answers without seeing the others</small></div></li><li><span>03</span><div><b>Critique and revision</b><small>Challenge assumptions, not just opinions</small></div></li><li><span>04</span><div><b>Vote and consensus</b><small>Agreement, dissent, and evidence gaps remain visible</small></div></li></ol>
+      <div class="ndr-debate-actions"><button type="button" class="ndr-secondary" data-action="critique" disabled>Run critique round</button><button type="button" class="ndr-primary" data-action="consensus" disabled>Generate consensus <span>→</span></button><button type="button" class="ndr-quiet-btn" data-action="cancel" disabled>Cancel / reset</button></div>
+    </section>
+
+    <section class="ndr-report-section" id="ndr-report-section" aria-labelledby="ndr-report-title" hidden>
+      <div class="ndr-report-banner"><span class="ndr-kicker">04 / THE COUNCIL'S REPORT</span><div class="ndr-report-title-row"><div><h2 id="ndr-report-title">Consensus report</h2><p>A reasoned synthesis—not a claim of absolute truth.</p></div><span class="ndr-consensus-pill" id="ndr-consensus-status">Partial agreement</span></div></div>
+      <div id="ndr-report" class="ndr-report-grid"></div>
+      <div class="ndr-report-actions"><button type="button" class="ndr-primary" data-action="copy-report">Copy report</button><button type="button" class="ndr-secondary" data-action="export-report">Export Markdown</button><button type="button" class="ndr-secondary" data-action="save-report">Save debate</button></div>
+    </section>
+
+    <section class="ndr-vote-section ndr-panel" aria-labelledby="ndr-vote-title">
+      <div class="ndr-section-head"><div><span class="ndr-kicker">YOUR VOICE</span><h2 id="ndr-vote-title">Which perspective helped most?</h2></div><span class="ndr-step">OPTIONAL</span></div>
+      <p class="ndr-muted">Your vote measures usefulness, not objective truth. You can vote after the first answers appear.</p>
+      <div class="ndr-vote-options" id="ndr-vote-options"><button type="button" disabled>Builder</button><button type="button" disabled>Skeptic</button><button type="button" disabled>Researcher</button><button type="button" disabled>Judge</button></div>
+      <p class="ndr-vote-result" id="ndr-vote-result" aria-live="polite">No vote yet.</p>
+    </section>
+
+    <section class="ndr-history-section ndr-panel" aria-labelledby="ndr-history-title">
+      <div class="ndr-section-head"><div><span class="ndr-kicker">YOUR WORKSPACE</span><h2 id="ndr-history-title">Saved debates</h2></div><button type="button" class="ndr-quiet-btn" data-action="clear-history">Clear all</button></div>
+      <div id="ndr-history" class="ndr-history-list"><p class="ndr-muted">Debates you save on this device will appear here.</p></div>
+    </section>
+    <footer class="ndr-footer"><a href="./nimbu.html#/">← Back to NIMBU</a><span>Built for clearer thinking · Demo mode runs locally</span></footer>
+    <div id="ndr-toast" class="ndr-toast" role="status" aria-live="polite"></div>
+  </main>
+</body>
+</html>

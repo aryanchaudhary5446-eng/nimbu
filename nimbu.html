@@ -117,5 +117,24 @@ try{var q=location.search,s=sessionStorage;if(/[?&]app=1/.test(q))s.setItem("nim
 })();
 </script>
 
+<script>
+(async function () {
+  if (!("serviceWorker" in navigator)) return;
+
+  try {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+
+    for (const registration of registrations) {
+      await registration.update();
+    }
+
+    console.log("NIMBU: service worker update check completed.");
+  } catch (error) {
+    console.error("NIMBU update check failed:", error);
+  }
+})();
+</script>
+
+
 </body>
 </html>

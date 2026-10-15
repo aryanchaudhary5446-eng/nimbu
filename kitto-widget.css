@@ -495,3 +495,245 @@
     animation: none !important;
   }
 }
+
+/* NIMBU futuristic flying orb */
+#kitto-launcher {
+  position: fixed;
+  isolation: isolate;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 25%, #504cff, #10152f 65%) !important;
+  border: 1px solid #8df7ff !important;
+  border-radius: 50%;
+  animation: nimbu-orb-float 3s ease-in-out infinite !important;
+  box-shadow:
+    0 0 12px #00e5ff,
+    0 0 28px #784bff,
+    inset 0 0 18px #00e5ff44 !important;
+}
+
+#kitto-launcher::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  z-index: -1;
+  border-radius: 50%;
+  border: 1px solid #a58aff88;
+  box-shadow: 0 0 18px #784bff99, inset 0 0 12px #00e5ff55;
+  animation: nimbu-orb-pulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+#kitto-launcher::after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  top: 7px;
+  right: 10px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px 3px #00e5ff;
+  pointer-events: none;
+}
+
+#kitto-launcher .nimbu-orb-core {
+  position: relative;
+  display: block;
+  width: 48px;
+  height: 46px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 25%, #303d8a, #080d20 75%);
+  box-shadow: inset 0 0 15px #6548ff99;
+}
+
+.nimbu-orb-eye {
+  position: absolute;
+  display: block;
+  width: 12px;
+  height: 15px;
+  border-radius: 50%;
+  background: #72faff;
+  border: 1px solid #d8ffff;
+  box-shadow: 0 0 8px #00e5ff, 0 0 14px #784bff;
+  animation: nimbu-eye-watch 3.8s ease-in-out infinite;
+}
+
+.nimbu-orb-eye::after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 8px;
+  top: 3px;
+  left: 3px;
+  border-radius: 50%;
+  background: #10152f;
+  box-shadow: 0 0 3px #fff;
+}
+
+.nimbu-orb-eye.eye-one {
+  top: 5px;
+  left: 8px;
+  transform: rotate(-15deg);
+}
+
+.nimbu-orb-eye.eye-two {
+  top: 3px;
+  right: 7px;
+  transform: rotate(15deg);
+  animation-delay: -.8s;
+}
+
+.nimbu-orb-eye.eye-three {
+  top: 16px;
+  left: 18px;
+  animation-delay: -1.5s;
+}
+
+.nimbu-orb-eye.eye-four {
+  bottom: 3px;
+  left: 7px;
+  transform: rotate(15deg);
+  animation-delay: -2.1s;
+}
+
+.nimbu-orb-eye.eye-five {
+  bottom: 3px;
+  right: 7px;
+  transform: rotate(-15deg);
+  animation-delay: -2.8s;
+}
+
+#kitto-launcher .nimbu-orb-label {
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 3px 7px;
+  border-radius: 10px;
+  color: #e6fcff;
+  background: #11152bee;
+  border: 1px solid #5145ff88;
+  font: 700 9px/1.2 system-ui, sans-serif;
+  letter-spacing: 1px;
+  box-shadow: 0 0 10px #784bff55;
+  pointer-events: none;
+}
+
+/* Orb menu */
+#nimbu-orb-menu {
+  position: fixed;
+  right: 18px;
+  bottom: 166px;
+  z-index: 10000;
+  width: min(280px, calc(100vw - 32px));
+  padding: 14px;
+  border: 1px solid #6559ff;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #17142f, #081a2c);
+  color: #f4f7ff;
+  box-shadow: 0 12px 45px #0009, 0 0 25px #784bff55;
+  font-family: system-ui, sans-serif;
+}
+
+#nimbu-orb-menu[hidden] {
+  display: none !important;
+}
+
+.nimbu-orb-menu-title {
+  margin: 0 0 10px;
+  color: #8df7ff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.nimbu-orb-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid #ffffff1c;
+  border-radius: 14px;
+  background: #ffffff08;
+  color: #fff;
+  text-decoration: none;
+  transition: background .2s, border-color .2s, transform .2s;
+}
+
+.nimbu-orb-menu-item > span:first-child {
+  font-size: 25px;
+}
+
+.nimbu-orb-menu-item > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nimbu-orb-menu-item strong {
+  font-size: 14px;
+}
+
+.nimbu-orb-menu-item small {
+  color: #b9c8e8;
+  font-size: 11px;
+}
+
+.nimbu-orb-menu-item:hover,
+.nimbu-orb-menu-item:focus-visible {
+  background: #784bff33;
+  border-color: #00e5ff;
+  transform: translateY(-2px);
+  outline: none;
+}
+
+@keyframes nimbu-orb-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes nimbu-orb-pulse {
+  0%, 100% { opacity: .5; transform: scale(.98); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+@keyframes nimbu-eye-watch {
+  0%, 15%, 100% { translate: 0 0; }
+  25%, 35% { translate: 2px -1px; }
+  50%, 60% { translate: -2px 1px; }
+  75%, 85% { translate: 0 1px; }
+}
+
+@media (max-width: 600px) {
+  #kitto-launcher {
+    right: 15px;
+    bottom: 82px;
+    width: 58px;
+    height: 58px;
+  }
+
+  #kitto-launcher .nimbu-orb-core {
+    transform: scale(.88);
+  }
+
+  #nimbu-orb-menu {
+    right: 12px;
+    bottom: 154px;
+    width: min(280px, calc(100vw - 24px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #kitto-launcher,
+  #kitto-launcher::before,
+  .nimbu-orb-eye {
+    animation: none !important;
+  }
+}
+

@@ -1,1023 +1,255 @@
+
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fafafd"><title>Kitto AI</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>KITTO AI — Your AI companion</title>
 <style>
-
-:root {
-  color-scheme: light;
-  --bg: #f7f8fc;
-  --ink: #191a2b;
-  --muted: #777b91;
-  --line: #e8e9f2;
-  --blue: #6558f5;
-  --card: #ffffff;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  min-height: 100%;
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  font-family: Inter, system-ui, -apple-system, sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-}
-
-button, input, textarea, select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-  color: var(--ink);
-}
-
-button:focus-visible,
-textarea:focus-visible {
-  outline: 3px solid #aaa2ff;
-  outline-offset: 3px;
-}
-
-.app {
-  min-height: 100vh;
-  min-height: 100dvh;
-}
-
-.top {
-  height: 68px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 20px;
-  background: rgba(255,255,255,.94);
-  border-bottom: 1px solid var(--line);
-}
-
-.ib {
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: white;
-}
-
-.plan {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  background: white;
-  font-size: 13px;
-}
-
-.plan b {
-  color: var(--blue);
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: linear-gradient(135deg,#b8f0ff,#9d8bff,#e5c5ff);
-}
-
-.avatar.sm {
-  width: 28px;
-  height: 28px;
-}
-
-.eyes {
-  display: flex;
-  gap: 5px;
-}
-
-.eyes i {
-  width: 4px;
-  height: 7px;
-  border-radius: 50%;
-  background: #5145ad;
-}
-
-.main {
-  width: min(900px,100%);
-  margin: 0 auto;
-  padding: 38px 20px 220px;
-}
-
-.home, .chat {
-  width: 100%;
-}
-
-.logo {
-  width: 66px;
-  height: 66px;
-  margin: 12px auto 20px;
-}
-
-.logo svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 8px 15px #a49bff55);
-}
-
-.eyebrow {
-  color: var(--blue);
-  font-size: 12px;
-  font-weight: 750;
-  letter-spacing: .13em;
-  text-transform: uppercase;
-  text-align: center;
-}
-
-h1 {
-  margin: 12px 0;
-  font-size: clamp(29px,6vw,43px);
-  line-height: 1.15;
-  letter-spacing: -.045em;
-  text-align: center;
-}
-
-h2, h3 {
-  letter-spacing: -.025em;
-}
-
-.intro {
-  max-width: 510px;
-  margin: 0 auto 32px;
-  color: var(--muted);
-  text-align: center;
-  line-height: 1.75;
-  font-size: 15px;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(2,minmax(0,1fr));
-  gap: 14px;
-  margin-top: 25px;
-}
-
-.card {
-  min-width: 0;
-  padding: 20px;
-  margin: 0 0 14px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: var(--card);
-  box-shadow: 0 5px 18px #22224406;
-}
-
-button.card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  min-height: 142px;
-  text-align: left;
-  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-}
-
-button.card:hover {
-  transform: translateY(-3px);
-  border-color: #c9c3ff;
-  box-shadow: 0 10px 25px #5145ad12;
-}
-
-.ci {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 13px;
-  background: #f0eeff;
-  color: var(--blue);
-  font-size: 20px;
-  font-weight: 700;
-}
-
-button.card strong {
-  font-size: 15px;
-}
-
-button.card small {
-  color: var(--muted);
-  line-height: 1.5;
-  font-size: 12px;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.chat {
-  min-height: 180px;
-  padding-bottom: 20px;
-}
-
-.chat .card {
-  overflow-wrap: anywhere;
-  line-height: 1.7;
-}
-
-.chat .card strong {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--blue);
-}
-
-.chat .card p {
-  margin: 0;
-}
-
-.bottom {
-  position: fixed;
-  z-index: 10;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 12px 18px max(12px,env(safe-area-inset-bottom));
-  background: linear-gradient(to bottom,transparent,#f7f8fc 18%);
-}
-
-.composer {
-  position: relative;
-  width: min(860px,100%);
-  margin: 0 auto;
-  padding: 12px;
-  border: 1px solid #dedff0;
-  border-radius: 22px;
-  background: white;
-  box-shadow: 0 8px 32px #24204a12;
-}
-
-.composer textarea {
-  display: block;
-  width: 100%;
-  min-height: 55px;
-  max-height: 150px;
-  resize: vertical;
-  padding: 10px;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--ink);
-}
-
-.composer textarea:focus-visible {
-  outline: none;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.circle, .send {
-  display: grid;
-  flex-shrink: 0;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: white;
-}
-
-.send {
-  border-color: var(--blue);
-  background: var(--blue);
-  color: white;
-}
-
-.send:disabled {
-  opacity: .5;
-  cursor: not-allowed;
-}
-
-.modelbtn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  background: white;
-  font-size: 12px;
-}
-
-.spacer {
-  flex: 1;
-}
-
-.modelwrap {
-  position: relative;
-}
-
-.tools, .menu {
-  position: absolute;
-  bottom: calc(100% + 10px);
-  left: 0;
-  z-index: 15;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 165px;
-  padding: 8px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: white;
-  box-shadow: 0 10px 35px #22224418;
-}
-
-.menu {
-  left: auto;
-  right: 0;
-}
-
-.tools button, .menu button {
-  padding: 11px;
-  border: 0;
-  border-radius: 9px;
-  background: white;
-  text-align: left;
-}
-
-.tools button:hover, .menu button:hover,
-.menu button.selected {
-  background: #f0eeff;
-}
-
-.disclaimer {
-  margin: 8px auto 0;
-  color: var(--muted);
-  text-align: center;
-  font-size: 10px;
-}
-
-.notice {
-  width: min(860px,100%);
-  margin: 0 auto 8px;
-  padding: 12px;
-  border: 1px solid #f0d5a0;
-  border-radius: 12px;
-  background: #fff8e8;
-  color: #74501b;
-  font-size: 13px;
-}
-
-.notice button {
-  float: right;
-  border: 0;
-  background: transparent;
-}
-
-.overlay {
-  position: fixed;
-  z-index: 30;
-  inset: 0;
-  display: flex;
-  background: #16152a66;
-}
-
-.drawer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: min(310px,85vw);
-  height: 100%;
-  padding: 18px;
-  background: white;
-  box-shadow: 10px 0 40px #0002;
-}
-
-.dhead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  font-weight: 750;
-}
-
-.item {
-  padding: 13px;
-  border: 0;
-  border-radius: 12px;
-  background: #f7f7fb;
-  text-align: left;
-}
-
-.label {
-  margin-top: 12px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-}
-
-.promo {
-  margin-top: auto;
-  padding: 18px;
-  border: 1px solid #e5e0ff;
-  border-radius: 16px;
-  background: linear-gradient(145deg,#f4f1ff,#f9faff);
-}
-
-.promo strong {
-  display: block;
-  margin-top: 8px;
-}
-
-.promo p {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.promo button {
-  width: 100%;
-  border: 0;
-  border-radius: 10px;
-  background: var(--blue);
-  color: white;
-}
-
-footer {
-  color: var(--ink);
-}
-
-@media (min-width: 700px) {
-  .main {
-    padding-top: 48px;
-  }
-
-  .logo {
-    margin-top: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .top {
-    height: 60px;
-    padding: 10px 12px;
-  }
-
-  .main {
-    padding: 25px 14px 205px;
-  }
-
-  .logo {
-    width: 55px;
-    height: 55px;
-  }
-
-  .intro {
-    font-size: 14px;
-    margin-bottom: 24px;
-  }
-
-  .cards {
-    gap: 10px;
-  }
-
-  button.card {
-    min-height: 140px;
-    padding: 14px;
-  }
-
-  .bottom {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-
-  .composer {
-    padding: 9px;
-    border-radius: 18px;
-  }
-
-  .row {
-    gap: 6px;
-  }
-
-  .circle, .send {
-    width: 36px;
-    height: 36px;
-  }
-
-  .modelbtn {
-    padding: 9px;
-    gap: 5px;
-  }
-
-  .disclaimer {
-    font-size: 9px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    scroll-behavior: auto !important;
-    transition: none !important;
-  }
-}
-
-/* KITTO AI design repair */
-:root {
-  --bg: #f7f8fc;
-  --ink: #191a2b;
-  --muted: #777b91;
-  --line: #e8e9f2;
-  --blue: #6558f5;
-  --card: #fff;
-}
-
-body {
-  background: var(--bg);
-  color: var(--ink);
-}
-
-.top {
-  height: 68px;
-  padding: 12px 20px;
-  background: #fff;
-  border-bottom: 1px solid var(--line);
-}
-
-.ib, .circle {
-  display: inline-grid;
-  place-items: center;
-  padding: 0;
-  width: 42px;
-  height: 42px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: #fff;
-}
-
-.plan, .modelbtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  background: #fff;
-}
-
-.plan b {
-  color: var(--blue);
-}
-
-.main {
-  width: min(900px, 100%);
-  margin: auto;
-  padding: 38px 20px 220px;
-}
-
-.logo {
-  width: 66px;
-  height: 66px;
-  margin: 12px auto 20px;
-}
-
-.logo svg {
-  width: 100%;
-  height: 100%;
-}
-
-.eyebrow {
-  color: var(--blue);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-h1 {
-  font-size: clamp(29px, 6vw, 43px);
-  line-height: 1.15;
-  text-align: center;
-}
-
-.intro {
-  max-width: 510px;
-  margin: 0 auto 30px;
-  color: var(--muted);
-  line-height: 1.7;
-  text-align: center;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 24px;
-}
-
-.card {
-  min-width: 0;
-  padding: 18px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: var(--card);
-}
-
-button.card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  min-height: 140px;
-  text-align: left;
-}
-
-.ci {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 13px;
-  background: #f0eeff;
-  color: var(--blue);
-  font-size: 20px;
-}
-
-.card small {
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.hidden, [hidden] {
-  display: none !important;
-}
-
-.bottom {
-  position: fixed;
-  z-index: 10;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 12px 16px max(12px, env(safe-area-inset-bottom));
-  background: linear-gradient(transparent, var(--bg) 18%);
-}
-
-.composer {
-  width: min(860px, 100%);
-  margin: auto;
-  padding: 12px;
-  border: 1px solid #dedff0;
-  border-radius: 22px;
-  background: #fff;
-  box-shadow: 0 8px 32px #24204a12;
-}
-
-.composer textarea {
-  display: block;
-  width: 100%;
-  min-height: 55px;
-  resize: vertical;
-  border: 0;
-  outline: 0;
-  background: transparent;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.spacer {
-  flex: 1;
-}
-
-.send {
-  width: 40px;
-  height: 40px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--blue);
-  color: #fff;
-}
-
-.modelwrap {
-  position: relative;
-}
-
-.tools, .menu {
-  position: absolute;
-  z-index: 15;
-  bottom: calc(100% + 8px);
-  left: 0;
-  min-width: 150px;
-  padding: 8px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 8px 24px #0001;
-}
-
-.menu {
-  right: 0;
-  left: auto;
-}
-
-.tools button, .menu button {
-  display: block;
-  width: 100%;
-  text-align: left;
-}
-
-.disclaimer {
-  margin: 8px auto 0;
-  color: var(--muted);
-  font-size: 10px;
-  text-align: center;
-}
-
-.overlay {
-  position: fixed;
-  z-index: 30;
-  inset: 0;
-  display: flex;
-  background: #16152a66;
-}
-
-.drawer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: min(310px, 85vw);
-  height: 100%;
-  padding: 18px;
-  background: #fff;
-}
-
-.dhead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.item {
-  width: 100%;
-  padding: 13px;
-  border: 0;
-  border-radius: 12px;
-  background: #f7f7fb;
-  text-align: left;
-}
-
-.label {
-  margin-top: 12px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.promo {
-  margin-top: auto;
-  padding: 18px;
-  border: 1px solid #e5e0ff;
-  border-radius: 16px;
-  background: #f5f2ff;
-}
-
-.promo p {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-@media (max-width: 480px) {
-  .top {
-    padding: 10px 12px;
-  }
-
-  .main {
-    padding: 25px 14px 205px;
-  }
-
-  .cards {
-    gap: 10px;
-  }
-
-  button.card {
-    padding: 14px;
-  }
-
-  .bottom {
-    padding-right: 10px;
-    padding-left: 10px;
-  }
-
-  .composer {
-    padding: 9px;
-  }
-
-  .row {
-    gap: 5px;
-  }
-
-  .modelbtn {
-    gap: 4px;
-    padding: 9px;
-  }
-}
-
-
+:root{color-scheme:light;--bg:#fff;--panel:#f7f7f8;--card:#fff;--ink:#242424;--muted:#777;--line:#e7e7e7;--accent:#292929;--soft:#eee;--shadow:0 5px 24px #00000008}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,textarea:focus-visible{outline:2px solid #8c83ff;outline-offset:2px}
+body.dark{color-scheme:dark;--bg:#171717;--panel:#202020;--card:#242424;--ink:#eee;--muted:#aaa;--line:#383838;--accent:#eee;--soft:#303030;--shadow:0 5px 24px #0002}
+.app{min-height:100dvh}
+.top{height:64px;position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:0 20px;background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:750;letter-spacing:-.5px}
+.mark{width:34px;height:34px;border-radius:12px;background:linear-gradient(135deg,#a5f3fc,#a5a1ff 55%,#e5b5ff);display:grid;place-items:center;color:#27234a;font-size:21px}
+.topright{margin-left:auto;display:flex;align-items:center;gap:9px}
+.btn{min-height:38px;padding:9px 13px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.btn:hover,.suggestion:hover{background:var(--soft)}
+.iconbtn{width:40px;height:40px;padding:0;border:1px solid var(--line);border-radius:12px;background:var(--card);font-size:18px}
+.layout{display:flex;min-height:calc(100dvh - 64px)}
+.sidebar{width:260px;flex-shrink:0;padding:16px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.sidebtn{width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:12px;border:0;border-radius:12px;background:transparent}
+.sidebtn:hover,.sidebtn.active{background:var(--panel)}
+.side-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:18px 10px 6px}
+.history-list{display:flex;flex-direction:column;gap:4px;overflow:auto}
+.history-item{border:0;border-radius:10px;background:transparent;padding:10px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+.history-item:hover{background:var(--panel)}
+.sidefoot{margin-top:auto;padding:12px;border:1px solid var(--line);border-radius:15px;background:var(--panel)}
+.sidefoot p{font-size:12px;line-height:1.6;color:var(--muted)}
+.sidefoot strong{font-size:13px}
+.workspace{flex:1;min-width:0;display:flex;flex-direction:column;min-height:calc(100dvh - 64px)}
+.feed{width:min(790px,100%);margin:0 auto;padding:44px 24px 220px;flex:1}
+.welcome{text-align:center;padding:8vh 0 0}
+.logo{width:58px;height:58px;margin:0 auto 23px;border-radius:20px;background:linear-gradient(135deg,#c4f1ff,#b6b0ff 55%,#efc8ff);display:grid;place-items:center;font-size:30px;color:#30295d;box-shadow:0 8px 30px #a7a0ff26}
+.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700}
+h1{font-size:clamp(30px,5vw,44px);letter-spacing:-1.8px;line-height:1.12;margin:15px 0 12px}
+.sub{max-width:450px;margin:0 auto;color:var(--muted);line-height:1.75;font-size:15px}
+.suggestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:38px;text-align:left}
+.suggestion{padding:17px;border:1px solid var(--line);border-radius:17px;background:var(--card);min-height:110px;display:flex;flex-direction:column;gap:9px;transition:transform .15s}
+.suggestion:hover{transform:translateY(-2px)}
+.suggestion span{font-size:20px}
+.suggestion strong{font-size:14px}
+.suggestion small{font-size:12px;line-height:1.5;color:var(--muted)}
+.messages{display:flex;flex-direction:column;gap:24px}
+.message{display:flex;gap:12px;align-items:flex-start;animation:appear .2s ease}
+.msgmark{width:30px;height:30px;border-radius:11px;flex-shrink:0;display:grid;place-items:center;background:var(--panel);font-size:15px}
+.message.user .msgmark{background:var(--soft)}
+.msgbody{min-width:0;flex:1;padding-top:5px;line-height:1.8;font-size:15px;overflow-wrap:anywhere;white-space:pre-wrap}
+.msgbody strong{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:.3px}
+.typing{color:var(--muted);animation:pulse 1.2s infinite}
+.composer-zone{position:fixed;z-index:4;bottom:0;left:260px;right:0;padding:35px 22px max(12px,env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 25%)}
+.composer-wrap{width:min(760px,100%);margin:auto}
+.composer{border:1px solid var(--line);border-radius:23px;padding:12px 13px 10px;background:var(--card);box-shadow:var(--shadow)}
+.composer:focus-within{border-color:#b7b0ff;box-shadow:0 0 0 3px #8c83ff12,var(--shadow)}
+#prompt{display:block;width:100%;resize:none;min-height:58px;max-height:180px;padding:8px 6px;border:0;outline:0;background:transparent;color:var(--ink);line-height:1.6}
+#prompt::placeholder{color:var(--muted)}
+.controls{display:flex;align-items:center;gap:8px}
+.pill{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:8px 11px;font-size:12px}
+.spacer{flex:1}
+.send{width:39px;height:39px;border:0;border-radius:14px;background:var(--ink);color:var(--bg);font-size:19px}
+.send:disabled{opacity:.45}
+.note{text-align:center;color:var(--muted);font-size:10px;margin:10px 0 0}
+.status{display:none;padding:10px 12px;margin-bottom:8px;border-radius:12px;background:#fff1e8;color:#91481c;font-size:12px;overflow-wrap:anywhere}
+.status.show{display:block}
+.popwrap{position:relative}
+.pop{position:absolute;bottom:calc(100% + 9px);left:0;min-width:175px;padding:7px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);z-index:8}
+.pop button{display:block;width:100%;padding:11px;border:0;border-radius:9px;background:transparent;text-align:left;font-size:13px}
+.pop button:hover{background:var(--panel)}
+.hidden{display:none!important}
+.overlay{display:none}
+@keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{50%{opacity:.45}}
+@media(max-width:760px){
+ .top{height:58px;padding:0 12px}.layout{min-height:calc(100dvh - 58px)}
+ .sidebar{position:fixed;z-index:20;top:0;bottom:0;left:0;width:min(290px,85vw);transform:translateX(-105%);transition:transform .2s;box-shadow:var(--shadow)}
+ body.menu-open .sidebar{transform:translateX(0)}
+ .overlay{position:fixed;inset:0;z-index:19;background:#0007}
+ body.menu-open .overlay{display:block}
+ .workspace{min-height:calc(100dvh - 58px)}
+ .feed{padding:30px 17px 205px}
+ .welcome{padding-top:8vh}
+ .logo{width:52px;height:52px}
+ .suggestions{gap:9px;margin-top:28px}
+ .suggestion{padding:13px;min-height:112px}
+ .composer-zone{left:0;padding:28px 10px max(10px,env(safe-area-inset-bottom))}
+ .composer{border-radius:20px;padding:9px 10px}
+ #prompt{min-height:52px}
+ .note{font-size:9px}
+}
+@media(max-width:370px){.suggestions{grid-template-columns:1fr}.suggestion{min-height:auto}.topright{gap:5px}.top .iconbtn{width:36px;height:36px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
-
 </head>
 <body>
 <div class="app">
 <header class="top">
-<button class="ib" id="openMenu" aria-label="Open menu"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-<button class="plan" id="upgrade"><span>Free plan</span><span style="color:#a2a8b7">•</span><b>Upgrade</b></button>
-<button class="ib" id="profile" aria-label="Kitto profile"><span class="avatar sm"><span class="eyes"><i></i><i></i></span></span></button>
+<button class="iconbtn" id="menuBtn" aria-label="Toggle sidebar">☰</button>
+<div class="brand"><span class="mark">✦</span><span>KITTO AI</span></div>
+<div class="topright">
+<button class="btn" id="newBtn">＋ New chat</button>
+<button class="iconbtn" id="themeBtn" aria-label="Toggle theme">☾</button>
+</div>
 </header>
-<main class="main" id="main">
-<section class="home" id="home">
-<div class="logo"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4C37.2 20.8 43.2 26.8 60 32C43.2 37.2 37.2 43.2 32 60C26.8 43.2 20.8 37.2 4 32C20.8 26.8 26.8 20.8 32 4Z" fill="url(#g)"/><defs><linearGradient id="g" x1="8" y1="7" x2="54" y2="58"><stop stop-color="#6AD7FF"/><stop offset=".52" stop-color="#7C82FF"/><stop offset="1" stop-color="#A66BFF"/></linearGradient></defs></svg></div>
-<div class="eyebrow">Your AI companion</div><h1>Good Morning, Kitto</h1><p class="intro">Ask me anything, get ideas, solve problems, or just chat. I'm here to help you be your best.</p>
-<div class="cards">
-<button class="card" data-prompt="Give me creative ideas for my project, studies or business."><span class="ci">♧</span><strong>Get ideas</strong><small>For your projects, studies or business</small></button>
-<button class="card" data-prompt="Help me write, debug or understand some code."><span class="ci">‹/›</span><strong>Write code</strong><small>Debug, build or explain anything</small></button>
-<button class="card" data-prompt="Teach me something useful in simple, clear steps."><span class="ci">▤</span><strong>Learn something</strong><small>In simple, clear steps</small></button>
-<button class="card" data-prompt="Help me become more productive with a simple routine."><span class="ci">✧</span><strong>Be more productive</strong><small>Tools, tips and workflows</small></button>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+<button class="sidebtn active" id="sideNew">＋ New chat</button>
+<div class="side-label">Your workspace</div>
+<button class="sidebtn" id="historyLabel">◷ Recent chats</button>
+<div class="history-list" id="historyList"></div>
+<div class="sidefoot"><strong>✦ Your AI companion</strong><p>Ask questions, explore ideas, write code, and learn something new.</p></div>
+</aside>
+<div class="overlay" id="overlay"></div>
+<main class="workspace">
+<section class="feed" id="feed">
+<div class="welcome" id="welcome">
+<div class="logo">✦</div>
+<div class="eyebrow">Your AI companion</div>
+<h1>What can I help you<br>with today?</h1>
+<p class="sub">A little curiosity can take you a long way. Ask a question, build an idea, or solve something together.</p>
+<div class="suggestions">
+<button class="suggestion" data-prompt="Give me creative ideas for my project, studies or business."><span>✧</span><strong>Explore ideas</strong><small>Brainstorm your next big thing</small></button>
+<button class="suggestion" data-prompt="Help me write, debug or understand some code."><span>⌘</span><strong>Build with code</strong><small>Debug, build or explain code</small></button>
+<button class="suggestion" data-prompt="Teach me something useful in simple steps."><span>▤</span><strong>Learn something</strong><small>Understand a topic clearly</small></button>
+<button class="suggestion" data-prompt="Help me create a productive daily routine."><span>◷</span><strong>Get organized</strong><small>Make a simple plan that works</small></button>
 </div>
-</section><section class="chat hidden" id="chat" aria-live="polite"></section>
+</div>
+<div class="messages" id="messages" aria-live="polite"></div>
+</section>
 </main>
-<footer class="bottom">
-<div class="notice hidden" id="notice"><span id="noticeText"></span><button id="noticeX">✕</button></div>
-<div class="composer"><textarea id="prompt" rows="2" placeholder="How can I help you today?" aria-label="Message Kitto"></textarea><div class="row">
-<div class="modelwrap"><button class="circle" id="toolsBtn" aria-label="More tools">＋</button><div class="tools hidden" id="tools"><button id="attach">＋ Attach a file</button><button id="explore">✧ Explore tools</button></div></div>
-<div class="modelwrap"><button class="modelbtn" id="modelBtn"><span id="modelName">Quantum 3</span><span>⌄</span></button><div class="menu hidden" id="models"><button class="selected" data-model="Quantum 3">Quantum 3 ✓</button><button data-model="Fast">Fast</button><button data-model="Creative">Creative</button></div></div><div class="spacer"></div>
-<button class="circle" id="mic" aria-label="Voice input"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg></button>
-<button class="send" id="send" aria-label="Send message"><span id="sendIcon">▥</span></button>
-</div></div><p class="disclaimer">Kitto can make mistakes. Check important information.</p>
-</footer>
-<div class="overlay hidden" id="overlay"><aside class="drawer"><div class="dhead"><span style="display:flex;align-items:center;gap:10px"><span class="avatar sm"><span class="eyes"><i></i><i></i></span></span>Kitto AI</span><button class="ib" id="closeMenu">✕</button></div><button class="item" id="newChat">＋　New chat</button><div class="label">Workspace</div><button class="item" id="history">▤　Chat history</button><button class="item" id="settings">⚙　Settings</button><div class="promo"><span style="color:#514de8;font-size:20px">✧</span><strong>Get more with Kitto</strong><p>Explore more ways to learn, build and create.</p><button id="plans">Explore plans →</button></div></aside><div id="shade" style="flex:1"></div></div>
 </div>
-
+<div class="composer-zone">
+<div class="composer-wrap">
+<div class="status" id="status" role="status"></div>
+<div class="composer">
+<textarea id="prompt" rows="2" placeholder="Message KITTO AI..." aria-label="Message KITTO AI"></textarea>
+<div class="controls">
+<div class="popwrap">
+<button class="pill" id="modeBtn">✦ Balanced ▾</button>
+<div class="pop hidden" id="modeMenu">
+<button data-mode="Balanced">✦ Balanced</button>
+<button data-mode="Fast">⚡ Fast</button>
+<button data-mode="Creative">✧ Creative</button>
+</div>
+</div>
+<span class="spacer"></span>
+<button class="iconbtn" id="clearBtn" aria-label="Clear message">⌫</button>
+<button class="send" id="sendBtn" aria-label="Send message">↑</button>
+</div>
+</div>
+<p class="note">KITTO AI can make mistakes. Check important information.</p>
+</div>
+</div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase.js"></script>
 <script>
 "use strict";
-
-const $ = id => document.getElementById(id);
-let messages = [];
-let chats = JSON.parse(localStorage.getItem("kitto-chats-v1") || "[]");
-let busy = false;
-
-function saveChats() {
-  localStorage.setItem("kitto-chats-v1", JSON.stringify(chats));
+const $=id=>document.getElementById(id);
+const promptBox=$("prompt"),messagesBox=$("messages"),welcome=$("welcome");
+let busy=false,mode="Balanced",messages=[],history=[];
+try{history=JSON.parse(localStorage.getItem("kitto-chats-v1")||"[]");if(!Array.isArray(history))history=[]}catch{history=[]}
+function showStatus(text){$("status").textContent=text;$("status").classList.add("show")}
+function hideStatus(){$("status").classList.remove("show")}
+function renderMessage(role,text){
+ const row=document.createElement("article");row.className="message "+(role==="user"?"user":"assistant");
+ const mark=document.createElement("div");mark.className="msgmark";mark.textContent=role==="user"?"Y":"✦";
+ const body=document.createElement("div");body.className="msgbody";
+ const label=document.createElement("strong");label.textContent=role==="user"?"YOU":"KITTO AI";
+ const content=document.createElement("div");content.textContent=text;content.style.whiteSpace="pre-wrap";
+ body.append(label,content);row.append(mark,body);messagesBox.appendChild(row);return row;
 }
-
-function addMessage(role, text) {
-  messages.push({ role, content: text });
-
-  const chat = $("chat");
-  if (!chat) return;
-
-  const item = document.createElement("div");
-  item.className = "card";
-  const label = document.createElement("strong");
-  label.textContent = role === "user" ? "You" : "KITTO AI";
-  const content = document.createElement("p");
-  content.textContent = text;
-  content.style.whiteSpace = "pre-wrap";
-  item.append(label, content);
-
-  chat.appendChild(item);
-  chat.scrollTop = chat.scrollHeight;
+function renderHistory(){
+ const list=$("historyList");list.replaceChildren();
+ history.slice(0,20).forEach((item,index)=>{
+  const b=document.createElement("button");b.className="history-item";b.textContent=item.title||"New conversation";
+  b.addEventListener("click",()=>loadHistory(index));list.appendChild(b);
+ });
 }
-
-async function sendMessage(text) {
-  text = (text || "").trim();
-  if (!text || busy) return;
-
-  busy = true;
-  const prompt = $("prompt");
-  const send = $("send");
-
-  if (prompt) prompt.value = "";
-  if (send) send.disabled = true;
-
-  addMessage("user", text);
-
-  const chat = $("chat");
-  const typing = document.createElement("div");
-  typing.className = "card";
-  typing.textContent = "KITTO AI is thinking...";
-  if (chat) chat.appendChild(typing);
-
-  try {
-    if (!window.NIMBU_SUPABASE) {
-      throw new Error("Supabase is not connected. Check supabase.js.");
-    }
-
-    const { data, error } =
-      await window.NIMBU_SUPABASE.functions.invoke(
-        "swift-endpoint",
-        { body: { question: text } }
-      );
-
-    if (error) throw error;
-
-    const answer = data && data.answer;
-    if (!answer) throw new Error("The AI returned an empty answer.");
-
-    typing.remove();
-    addMessage("assistant", answer);
-
-    chats.unshift({
-      title: text.slice(0, 50),
-      messages: messages.slice(),
-      date: new Date().toISOString()
-    });
-    chats = chats.slice(0, 30);
-    saveChats();
-  } catch (err) {
-    typing.textContent =
-      "Sorry bro, I couldn't get a response. Check your internet connection and Supabase Edge Function. " +
-      (err.message || "");
-  } finally {
-    busy = false;
-    if (send) send.disabled = false;
-    if (prompt) prompt.focus();
-  }
+function saveHistory(){
+ if(!messages.length)return;
+ const first=messages.find(m=>m.role==="user");
+ if(!first)return;
+ const entry={title:first.content.slice(0,45),messages:messages.slice(),date:new Date().toISOString()};
+ history.unshift(entry);history=history.slice(0,20);
+ try{localStorage.setItem("kitto-chats-v1",JSON.stringify(history))}catch{}
+ renderHistory();
 }
-
-const form = $("prompt") && $("prompt").closest("form");
-
-if (form) {
-  form.addEventListener("submit", event => {
-    event.preventDefault();
-    sendMessage($("prompt").value);
-  });
+function newChat(){
+ if(messages.length)saveHistory();
+ messages=[];messagesBox.replaceChildren();welcome.classList.remove("hidden");
+ promptBox.value="";hideStatus();closeMenu();
 }
-
-if ($("send")) {
-  $("send").addEventListener("click", event => {
-    if (!form) {
-      event.preventDefault();
-      sendMessage($("prompt")?.value);
-    }
-  });
+function loadHistory(index){
+ const item=history[index];if(!item)return;
+ messages=(item.messages||[]).slice();messagesBox.replaceChildren();
+ welcome.classList.toggle("hidden",messages.length>0);
+ messages.forEach(m=>renderMessage(m.role,m.content));
+ closeMenu();
 }
-
-document.querySelectorAll("[data-prompt]").forEach(button => {
-  button.addEventListener("click", () => {
-    const text =
-      button.dataset.prompt ||
-      button.textContent.trim();
-
-    if ($("prompt")) $("prompt").value = text;
-    sendMessage(text);
-  });
+function closeMenu(){document.body.classList.remove("menu-open")}
+async function sendMessage(value){
+ const text=(value??promptBox.value).trim();if(!text||busy)return;
+ busy=true;hideStatus();promptBox.value="";promptBox.style.height="auto";
+ welcome.classList.add("hidden");
+ messages.push({role:"user",content:text});renderMessage("user",text);
+ const pending=renderMessage("assistant","KITTO AI is thinking...");
+ pending.querySelector(".msgbody div").classList.add("typing");
+ $("sendBtn").disabled=true;
+ try{
+  if(!window.NIMBU_SUPABASE||!window.NIMBU_SUPABASE.functions)throw new Error("Supabase client is not available. Check supabase.js and its project settings.");
+  const {data,error}=await window.NIMBU_SUPABASE.functions.invoke("swift-endpoint",{body:{question:text,mode}});
+  if(error)throw error;
+  const answer=data&&data.answer;
+  if(typeof answer!=="string"||!answer.trim())throw new Error("The AI returned an empty response.");
+  pending.remove();messages.push({role:"assistant",content:answer});renderMessage("assistant",answer);
+  saveHistory();
+ }catch(err){
+  pending.remove();const message=err&&err.message?err.message:"Unknown error";
+  showStatus("Couldn't get a reply: "+message);
+  messages.pop();
+ }finally{
+  busy=false;$("sendBtn").disabled=false;promptBox.focus();
+ }
+}
+$("sendBtn").addEventListener("click",()=>sendMessage());
+promptBox.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}});
+promptBox.addEventListener("input",()=>{promptBox.style.height="auto";promptBox.style.height=Math.min(promptBox.scrollHeight,180)+"px"});
+document.querySelectorAll("[data-prompt]").forEach(b=>b.addEventListener("click",()=>sendMessage(b.dataset.prompt)));
+$("newBtn").addEventListener("click",newChat);$("sideNew").addEventListener("click",newChat);
+$("menuBtn").addEventListener("click",()=>document.body.classList.toggle("menu-open"));
+$("overlay").addEventListener("click",closeMenu);
+$("clearBtn").addEventListener("click",()=>{promptBox.value="";promptBox.focus()});
+$("themeBtn").addEventListener("click",()=>{
+ document.body.classList.toggle("dark");const dark=document.body.classList.contains("dark");
+ $("themeBtn").textContent=dark?"☀":"☾";
+ try{localStorage.setItem("kitto-theme",dark?"dark":"light")}catch{}
 });
-
-if ($("newChat")) {
-  $("newChat").addEventListener("click", () => {
-    messages = [];
-    if ($("chat")) $("chat").replaceChildren();
-    if ($("prompt")) $("prompt").value = "";
-    if ($("home")) $("home").hidden = false;
-  });
-}
-
-if ($("history")) {
-  $("history").textContent = "Recent chats are saved on this device.";
-}
-
-if ($("mic") && "webkitSpeechRecognition" in window) {
-  $("mic").addEventListener("click", () => {
-    const recognition = new webkitSpeechRecognition();
-    recognition.lang = "en-IN";
-    recognition.onresult = event => {
-      $("prompt").value = event.results[0][0].transcript;
-    };
-    recognition.start();
-  });
-}
-
-console.log("KITTO AI initialized");
+try{if(localStorage.getItem("kitto-theme")==="dark"){document.body.classList.add("dark");$("themeBtn").textContent="☀"}}catch{}
+$("modeBtn").addEventListener("click",()=>$("modeMenu").classList.toggle("hidden"));
+document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{
+ mode=b.dataset.mode;$("modeBtn").textContent="✦ "+mode+" ▾";$("modeMenu").classList.add("hidden");
+}));
+$("historyLabel").addEventListener("click",()=>{renderHistory();if(window.innerWidth<=760)document.body.classList.add("menu-open")});
+document.addEventListener("click",e=>{
+ if(!$("modeMenu").contains(e.target)&&e.target!==$("modeBtn"))$("modeMenu").classList.add("hidden");
+});
+renderHistory();
+console.log("KITTO AI ready");
 </script>
 </body>
 </html>

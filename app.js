@@ -580,9 +580,19 @@ function render() {
     tools: () => toolsView(params),
     tool: () => detail(decodeURIComponent(parts[1] || "")),
     prompts: () => promptsView(params),
-    compare: compareView,
+        compare: compareView,
     favs: favsView,
-    ask: askView
+    ask: askView,
+    debate: () => `
+      <section style="width:100%;margin:0;padding:0;">
+        <iframe
+          src="./debate.html"
+          title="NIMBU Debate Room"
+          style="display:block;width:100%;height:calc(100vh - 90px);min-height:1100px;border:0;border-radius:14px;background:#0b0c16;"
+          loading="eager"
+        ></iframe>
+      </section>
+    `
   };
 
   $app.innerHTML = views[route]

@@ -14,7 +14,41 @@
   launcher.type = "button";
   launcher.setAttribute("aria-label", "Open KITTO AI chat");
   launcher.setAttribute("aria-expanded", "false");
-  launcher.innerHTML = `<span class="kitto-face">${face}</span>`;
+  launcher.innerHTML = `
+  <span class="nimbu-orb-core" aria-hidden="true">
+    <span class="nimbu-orb-eye eye-one"></span>
+    <span class="nimbu-orb-eye eye-two"></span>
+    <span class="nimbu-orb-eye eye-three"></span>
+    <span class="nimbu-orb-eye eye-four"></span>
+    <span class="nimbu-orb-eye eye-five"></span>
+  </span>
+  <span class="nimbu-orb-label">NIMBU AI</span>
+`;
+launcher.setAttribute("aria-label", "Open NIMBU AI menu");
+
+  const orbMenu = document.createElement("div");
+  orbMenu.id = "nimbu-orb-menu";
+  orbMenu.setAttribute("aria-label", "NIMBU AI menu");
+  orbMenu.hidden = true;
+
+  orbMenu.innerHTML = `
+    <p class="nimbu-orb-menu-title">Choose your AI</p>
+    <a class="nimbu-orb-menu-item" href="./nimbu.html#/debate">
+      <span aria-hidden="true">⚖️</span>
+      <span>
+        <strong>Debate Room</strong>
+        <small>Explore different viewpoints</small>
+      </span>
+    </a>
+    <a class="nimbu-orb-menu-item" href="./kitto-ai.html">
+      <span aria-hidden="true">🌟</span>
+      <span>
+        <strong>KITTO AI</strong>
+        <small>Your AI companion</small>
+      </span>
+    </a>
+  `;
+
 
   const panel = document.createElement("section");
   panel.id = "kitto-panel";
@@ -49,7 +83,7 @@
     </form>
   `;
 
-  document.body.append(launcher, panel);
+  document.body.append(launcher, orbMenu, panel);
 
   const messages = panel.querySelector("#kitto-messages");
   const form = panel.querySelector("#kitto-form");
@@ -127,10 +161,24 @@
     "assistant"
   );
 
+  
   launcher.addEventListener("click", () => {
-    if (panel.classList.contains("kitto-open")) closeChat();
-    else openChat();
+    const isOpen = !orbMenu.hidden;
+    orbMenu.hidden = isOpen;
+    launcher.setAttribute("aria-expanded", String(!isOpen));
   });
+
+  document.addEventListener("click", event => {
+    if (
+      !orbMenu.hidden &&
+      !launcher.contains(event.target) &&
+      !orbMenu.contains(event.target)
+    ) {
+      orbMenu.hidden = true;
+      launcher.setAttribute("aria-expanded", "false");
+    }
+  });
+
 
   close.addEventListener("click", closeChat);
 

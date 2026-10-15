@@ -384,41 +384,243 @@ function promptsView(params) {
 
 /* ---------- KITTO AI ---------- */
 
-function askView() {
-  const suggestions = [
-    "Explain Python loops in simple words",
-    "Help me build an AI startup",
-    "Create a study plan for engineering"
-  ];
 
-  return `<section class="kitto">
-    <h1>✨ KITTO AI</h1>
-    <p class="note">Your AI assistant inside NIMBU, powered by Groq through Supabase.</p>
-    <div class="chips">${suggestions.map(s => `<button type="button" class="chip" data-act="suggest">${esc(s)}</button>`).join("")}</div>
-    <div class="chat" id="chat" aria-live="polite" aria-label="KITTO AI conversation">
-      ${chat.map((m, i) => `<div class="msg ${m.r}">
-        <b>${m.r === "u" ? "You" : "KITTO AI"}</b>
-        <div class="kitto-text">${esc(m.t)}</div>
-        ${m.r === "a" ? `<button type="button" class="small" data-act="copymsg" data-id="${i}">Copy</button>` : ""}
-      </div>`).join("")}
-    </div>
-    <form class="searchrow" id="askForm">
-      <input id="askIn" name="message" maxlength="4000" placeholder="Ask KITTO anything..." aria-label="Message KITTO AI" required ${kittoBusy ? "disabled" : ""}>
-      <button class="primary" id="kittoSend" type="submit" ${kittoBusy ? "disabled" : ""}>${kittoBusy ? "Thinking..." : "Send"}</button>
-    </form>
-    <p class="note">AI can make mistakes. Verify important information.</p>
-    <button type="button" class="small" data-act="clearchat" ${kittoBusy ? "disabled" : ""}>Clear conversation</button>
-  </section>`;
+    function askView() {
+const suggestions = [
+"Explain Python loops in simple words",
+"Help me build an AI startup",
+"Create a study plan for engineering"
+];
+
+return `<section class="kitto">
+<style>
+.kitto {
+max-width: 850px;
+margin: 0 auto;
+padding: 20px 14px 32px;
+color: var(--text, inherit);
 }
 
-async function send(text) {
-  text = String(text || "").trim();
-  if (!text || kittoBusy) return;
-
-  if (text.length > 4000) {
-    toast("Message is too long. Maximum 4000 characters.");
-    return;
+  .kitto .kitto-hero {
+    text-align: center;
+    padding: 24px 12px;
+    border: 1px solid var(--border, #333);
+    border-radius: 22px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, rgba(124,58,237,.14), rgba(14,165,233,.10));
   }
+
+  .kitto .kitto-logo {
+    font-size: 36px;
+    margin-bottom: 8px;
+  }
+
+  .kitto h1 {
+    margin: 0 0 8px;
+    font-size: clamp(26px, 6vw, 38px);
+    letter-spacing: -1px;
+  }
+
+  .kitto .note {
+    opacity: .72;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .kitto .kitto-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 9px;
+    margin: 18px 0;
+  }
+
+  .kitto .chip {
+    padding: 10px 13px;
+    border: 1px solid var(--border, #444);
+    border-radius: 999px;
+    background: var(--card, transparent);
+    color: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform .2s, border-color .2s;
+  }
+
+  .kitto .chip:hover {
+    transform: translateY(-2px);
+    border-color: #8b5cf6;
+  }
+
+  .kitto .chat {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 14px;
+    min-height: 180px;
+    max-height: 58vh;
+    overflow-y: auto;
+    border: 1px solid var(--border, #333);
+    border-radius: 20px;
+    background: var(--card, rgba(127,127,127,.04));
+    scroll-behavior: smooth;
+  }
+
+  .kitto .msg {
+    width: fit-content;
+    max-width: 94%;
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid var(--border, #333);
+    overflow-wrap: anywhere;
+    animation: kittoIn .25s ease;
+  }
+
+  .kitto .msg.u {
+    align-self: flex-end;
+    background: rgba(124,58,237,.16);
+    border-color: rgba(139,92,246,.35);
+    border-bottom-right-radius: 5px;
+  }
+
+  .kitto .msg.a {
+    align-self: flex-start;
+    background: var(--card, rgba(127,127,127,.07));
+    border-bottom-left-radius: 5px;
+  }
+
+  .kitto .msg > b {
+    display: block;
+    font-size: 11px;
+    letter-spacing: .7px;
+    margin-bottom: 8px;
+    color: #a78bfa;
+  }
+
+  .kitto .kitto-text {
+    font-size: 14px;
+    line-height: 1.85;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .kitto .searchrow {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 14px 0;
+    padding: 7px;
+    border: 1px solid var(--border, #444);
+    border-radius: 17px;
+    background: var(--card, transparent);
+  }
+
+  .kitto .searchrow input {
+    flex: 1;
+    width: 0;
+    min-width: 0;
+    padding: 12px 10px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+
+  .kitto .searchrow .primary {
+    padding: 12px 17px;
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .kitto button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
+
+  .kitto .small {
+    padding: 7px 11px;
+    margin-top: 9px;
+    border: 1px solid var(--border, #444);
+    border-radius: 9px;
+    background: transparent;
+    color: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .kitto .kitto-footer {
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  @keyframes kittoIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .kitto { padding: 12px 8px 24px; }
+    .kitto .chat { padding: 10px; }
+    .kitto .msg { max-width: 97%; padding: 12px; }
+    .kitto .searchrow .primary { padding: 12px; }
+    .kitto .chip { font-size: 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kitto .msg { animation: none; }
+    .kitto .chip { transition: none; }
+  }
+</style>
+
+<header class="kitto-hero">
+  <div class="kitto-logo">✨</div>
+  <h1>KITTO AI</h1>
+  <p class="note">Your personal AI assistant, right inside NIMBU.</p>
+</header>
+
+<div class="kitto-chips">
+  ${suggestions.map(s =>
+    `<button type="button" class="chip" data-act="suggest">${esc(s)}</button>`
+  ).join("")}
+</div>
+
+<div class="chat" id="chat" aria-live="polite" aria-label="KITTO AI conversation">
+  ${chat.map((m, i) => `<div class="msg ${m.r}">
+    <b>${m.r === "u" ? "YOU" : "✨ KITTO AI"}</b>
+    <div class="kitto-text">${esc(m.t)
+      .replace(/^#{1,6}\s+/gm, "")
+      .replace(/^\s*>\s?/gm, "")
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/__(.*?)__/g, "$1")
+      .replace(/`([^`]+)`/g, "$1")
+    }</div>
+    ${m.r === "a" ? `<button type="button" class="small" data-act="copymsg" data-id="${i}">Copy answer</button>` : ""}
+  </div>`).join("")}
+</div>
+
+<form class="searchrow" id="askForm">
+  <input id="askIn" name="message" maxlength="4000"
+    placeholder="Ask KITTO anything..."
+    aria-label="Message KITTO AI" required
+    ${kittoBusy ? "disabled" : ""}>
+  <button class="primary" id="kittoSend" type="submit"
+    ${kittoBusy ? "disabled" : ""}>
+    ${kittoBusy ? "Thinking..." : "Send ↑"}
+  </button>
+</form>
+
+<div class="kitto-footer">
+  <p class="note">💡 AI can make mistakes. Verify important information.</p>
+  <button type="button" class="small" data-act="clearchat"
+    ${kittoBusy ? "disabled" : ""}>Clear conversation</button>
+</div>
+
+  </section>`;
+}
 
   const client = window.NIMBU_SUPABASE;
   if (!client || !client.functions) {

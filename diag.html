@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NIMBU diagnostic</title>
+<style>
+body{font:16px/1.5 system-ui,sans-serif;margin:0;padding:14px;background:#fff;color:#111}
+button{font:inherit;padding:12px 14px;border:0;border-radius:12px;background:#111;color:#fff;margin:4px 6px 4px 0}
+pre{background:#f3f3f3;border-radius:12px;padding:12px;white-space:pre-wrap;word-break:break-word;font-size:13px}
+iframe{width:100%;height:240px;border:1px solid #ccc;border-radius:12px;background:#fff}
+</style></head><body>
+<h2>🍋 NIMBU diagnostic</h2>
+<p>Loads your live nimbu.html in a frame and reports exact errors.</p>
+<button id="n">Run test: normal</button><button id="a">Run test: app mode</button><button id="c">Copy report</button>
+<pre id="out">Press a button.</pre>
+<iframe id="f" title="test"></iframe>
+<script>
+var out=document.getElementById("out"),f=document.getElementById("f"),lines=[];
+function log(t){lines.push(t);out.textContent=lines.join("\n");}
+window.addEventListener("message",function(e){if(e.data&&e.data.nimbuDiag)log("• "+e.data.nimbuDiag);});
+function catcher(appMode){
+ return '<script>(function(){'+
+ (appMode?'document.documentElement.classList.add("is-app");':'')+
+ 'function s(t){parent.postMessage({nimbuDiag:t},"*")}'+
+ 'window.addEventListener("error",function(e){var t=e.target;if(t&&t!==window&&(t.src||t.href))s("FILE NOT LOADED: "+(t.src||t.href));else s("JS ERROR: "+e.message+" @ "+String(e.filename||"").split("/").pop()+":"+e.lineno+":"+e.colno)},true);'+
+ 'window.addEventListener("unhandledrejection",function(e){s("PROMISE ERROR: "+(e.reason&&e.reason.message||e.reason))});'+
+ '})();<\/script>';
+}
+function run(appMode){
+ lines=[];log("Running ("+(appMode?"app mode":"normal")+")...");
+ fetch("nimbu.html?t="+Date.now(),{cache:"no-store"}).then(function(r){
+  log("nimbu.html status: "+r.status);return r.text();
+ }).then(function(html){
+  var scripts=[],re=/<script[^>]*\ssrc=["']([^"']+)["']/gi,m;
+  while((m=re.exec(html)))scripts.push(m[1]);
+  log("Script order in nimbu.html:\n  "+scripts.join("\n  "));
+  log("Supabase CDN tag: "+/supabase/i.test(scripts.join(" ").replace(/supabase\.js/g,""))+" | supabase.js tag: "+scripts.some(function(x){return /^supabase\.js/.test(x)}));
+  var inst=html.replace(/<head[^>]*>/i,function(h){return h+catcher(appMode)});
+  f.onload=function(){setTimeout(report,2500)};
+  f.srcdoc=inst;
+ }).catch(function(e){log("FETCH FAILED: "+e)});
+}
+function report(){
+ try{
+  var w=f.contentWindow,d=f.contentDocument,app=d.getElementById("app");
+  log("--- after 2.5 seconds ---");
+  log("#app content length: "+(app?app.innerHTML.length:"no #app element"));
+  log("typeof render: "+typeof w.render+" | NIMBU data: "+!!w.NIMBU+" | tools: "+(w.NIMBU&&w.NIMBU.tools?w.NIMBU.tools.length:"n/a"));
+  log("Supabase client: "+!!w.NIMBU_SUPABASE+" | supabase library: "+!!w.supabase);
+  log("is-app class: "+d.documentElement.classList.contains("is-app"));
+  log("Page text starts: "+(app?app.textContent.trim().slice(0,80):""));
+ }catch(e){log("REPORT FAILED: "+e)}
+}
+document.getElementById("n").onclick=function(){run(false)};
+document.getElementById("a").onclick=function(){run(true)};
+document.getElementById("c").onclick=function(){navigator.clipboard.writeText(out.textContent).then(function(){alert("Copied")},function(){alert("Copy blocked: select the text manually")})};
+</script></body></html>

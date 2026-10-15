@@ -406,7 +406,7 @@ function askView() {
   `;
 }
 
-</style>
+
 
 <header class="kitto-hero">
   <div class="kitto-logo">✨</div>

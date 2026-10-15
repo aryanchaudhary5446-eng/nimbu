@@ -404,55 +404,15 @@ function askView() {
       ></iframe>
     </section>
   `;
-}
 
 
 
-<header class="kitto-hero">
-  <div class="kitto-logo">✨</div>
-  <h1>KITTO AI</h1>
-  <p class="note">Your personal AI assistant, right inside NIMBU.</p>
-</header>
 
-<div class="kitto-chips">
-  ${suggestions.map(s =>
-    `<button type="button" class="chip" data-act="suggest">${esc(s)}</button>`
-  ).join("")}
-</div>
 
-<div class="chat" id="chat" aria-live="polite" aria-label="KITTO AI conversation">
-  ${chat.map((m, i) => `<div class="msg ${m.r}">
-    <b>${m.r === "u" ? "YOU" : "✨ KITTO AI"}</b>
-    <div class="kitto-text">${esc(m.t)
-      .replace(/^#{1,6}\s+/gm, "")
-      .replace(/^\s*>\s?/gm, "")
-      .replace(/\*\*(.*?)\*\*/g, "$1")
-      .replace(/__(.*?)__/g, "$1")
-      .replace(/`([^`]+)`/g, "$1")
-    }</div>
-    ${m.r === "a" ? `<button type="button" class="small" data-act="copymsg" data-id="${i}">Copy answer</button>` : ""}
-  </div>`).join("")}
-</div>
+       
 
-<form class="searchrow" id="askForm">
-  <input id="askIn" name="message" maxlength="4000"
-    placeholder="Ask KITTO anything..."
-    aria-label="Message KITTO AI" required
-    ${kittoBusy ? "disabled" : ""}>
-  <button class="primary" id="kittoSend" type="submit"
-    ${kittoBusy ? "disabled" : ""}>
-    ${kittoBusy ? "Thinking..." : "Send ↑"}
-  </button>
-</form>
+ 
 
-<div class="kitto-footer">
-  <p class="note">💡 AI can make mistakes. Verify important information.</p>
-  <button type="button" class="small" data-act="clearchat"
-    ${kittoBusy ? "disabled" : ""}>Clear conversation</button>
-</div>
-
-   </section>`;
-}
 
 async function sendKittoMessage(text) {
   const client = window.NIMBU_SUPABASE;

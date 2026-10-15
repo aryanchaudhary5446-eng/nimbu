@@ -385,6 +385,7 @@ function promptsView(params) {
 /* ---------- KITTO AI ---------- */
 
 
+
 function askView() {
   return `
     <section style="width:100%;margin:0;padding:0;">
@@ -404,17 +405,10 @@ function askView() {
       ></iframe>
     </section>
   `;
-     }
-
-
-
-
-       
-
- 
-
+}
 
 async function sendKittoMessage(text) {
+
   const client = window.NIMBU_SUPABASE;
   if (!client || !client.functions) {
     toast("Supabase did not load. Refresh NIMBU and try again.");

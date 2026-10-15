@@ -1,56 +1,221 @@
+
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NIMBU diagnostic</title>
+<title>NIMBU Full Diagnostics</title>
 <style>
-body{font:16px/1.5 system-ui,sans-serif;margin:0;padding:14px;background:#fff;color:#111}
-button{font:inherit;padding:12px 14px;border:0;border-radius:12px;background:#111;color:#fff;margin:4px 6px 4px 0}
-pre{background:#f3f3f3;border-radius:12px;padding:12px;white-space:pre-wrap;word-break:break-word;font-size:13px}
-iframe{width:100%;height:240px;border:1px solid #ccc;border-radius:12px;background:#fff}
-</style></head><body>
-<h2>🍋 NIMBU diagnostic</h2>
-<p>Loads your live nimbu.html in a frame and reports exact errors.</p>
-<button id="n">Run test: normal</button><button id="a">Run test: app mode</button><button id="c">Copy report</button>
-<pre id="out">Press a button.</pre>
-<iframe id="f" title="test"></iframe>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+body{font:15px/1.5 system-ui,sans-serif;margin:0;padding:16px;background:#f4f6fb;color:#18202b}
+h1{font-size:24px;margin:0}
+h2{font-size:17px;margin:18px 0 8px}
+p{color:#536174}
+button{font:inherit;font-weight:600;padding:10px 13px;border:0;border-radius:10px;background:#18202b;color:white;margin:3px;cursor:pointer}
+button.secondary{background:#e0e6ef;color:#18202b}
+button:disabled{opacity:.5}
+.card{background:white;border:1px solid #dce2eb;border-radius:14px;padding:14px;margin:12px 0}
+.actions{display:flex;flex-wrap:wrap;gap:5px}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#101722;color:#d9e5f4;padding:13px;border-radius:10px;font-size:12px;max-height:440px;overflow:auto}
+.status{font-weight:700}
+.pass{color:#16834a}.warn{color:#9a6500}.fail{color:#c32d3b}
+iframe{display:block;width:100%;height:650px;border:1px solid #ccd4e1;border-radius:12px;background:white}
+.small{font-size:12px;color:#657187}
+</style>
+</head>
+<body>
+
+<h1>🍋 NIMBU Full Diagnostics</h1>
+<p>Test loading, JavaScript, navigation, buttons, themes, KITTO AI and Supabase.</p>
+
+<div class="card">
+  <h2>1. Run tests</h2>
+  <div class="actions">
+    <button id="normal">Test normal mode</button>
+    <button id="appmode">Test app mode</button>
+    <button id="all">Run all checks</button>
+    <button id="copy" class="secondary">Copy report</button>
+    <button id="clear" class="secondary">Clear report</button>
+  </div>
+  <p class="small">All checks run against your live nimbu.html. Keep your site published before testing.</p>
+</div>
+
+<div class="card">
+  <h2>2. Targeted tests</h2>
+  <div class="actions">
+    <button id="buttons">Audit buttons</button>
+    <button id="themes">Audit themes</button>
+    <button id="kitto">Test KITTO AI route</button>
+    <button id="home" class="secondary">Return to home route</button>
+  </div>
+  <p class="small">Button audits inspect controls without automatically clicking potentially destructive actions.</p>
+</div>
+
+<div class="card">
+  <h2>3. Results</h2>
+  <p id="summary" class="status">Waiting for test...</p>
+  <pre id="out">Press “Run all checks” to begin.</pre>
+</div>
+
+<div class="card">
+  <h2>4. Live app preview</h2>
+  <iframe id="frame" title="NIMBU live test"></iframe>
+  <p class="small">Interact with the app above to test real buttons and theme changes. Click events and errors will be logged.</p>
+</div>
+
 <script>
-var out=document.getElementById("out"),f=document.getElementById("f"),lines=[];
-function log(t){lines.push(t);out.textContent=lines.join("\n");}
-window.addEventListener("message",function(e){if(e.data&&e.data.nimbuDiag)log("• "+e.data.nimbuDiag);});
-function catcher(appMode){
- return '<script>(function(){'+
- (appMode?'document.documentElement.classList.add("is-app");':'')+
- 'function s(t){parent.postMessage({nimbuDiag:t},"*")}'+
- 'window.addEventListener("error",function(e){var t=e.target;if(t&&t!==window&&(t.src||t.href))s("FILE NOT LOADED: "+(t.src||t.href));else s("JS ERROR: "+e.message+" @ "+String(e.filename||"").split("/").pop()+":"+e.lineno+":"+e.colno)},true);'+
- 'window.addEventListener("unhandledrejection",function(e){s("PROMISE ERROR: "+(e.reason&&e.reason.message||e.reason))});'+
- '})();<\/script>';
+(function(){
+"use strict";
+
+var out=document.getElementById("out");
+var summary=document.getElementById("summary");
+var frame=document.getElementById("frame");
+var lines=[];
+var results={pass:0,warn:0,fail:0};
+var currentMode="normal";
+var testStarted=false;
+
+function log(message,type){
+  type=type||"info";
+  var prefix={pass:"PASS",warn:"WARN",fail:"FAIL",info:"INFO"};
+  lines.push("["+prefix[type]+"] "+message);
+  results[type==="pass"?"pass":type==="warn"?"warn":type==="fail"?"fail":"pass"]++;
+  out.textContent=lines.join("\n");
+  summary.textContent=
+    "PASS: "+results.pass+" | WARN: "+results.warn+" | FAIL: "+results.fail;
+  summary.className="status "+
+    (results.fail?"fail":results.warn?"warn":"pass");
 }
+
+function reset(title){
+  lines=[];
+  results={pass:0,warn:0,fail:0};
+  testStarted=true;
+  log(title);
+}
+
+function send(action,data){
+  frame.contentWindow.postMessage(
+    Object.assign({nimbuTester:action},data||{}),"*"
+  );
+}
+
+window.addEventListener("message",function(event){
+  var d=event.data;
+  if(!d||!d.nimbuTesterResult)return;
+  if(d.kind==="error")log(d.message,"fail");
+  else if(d.kind==="warn")log(d.message,"warn");
+  else if(d.kind==="pass")log(d.message,"pass");
+  else if(d.kind==="click")log(d.message,"info");
+  else if(d.kind==="theme")log(d.message,d.changed?"pass":"warn");
+  else if(d.kind==="audit")log(d.message,d.level||"info");
+  else if(d.kind==="route")log(d.message,d.ok?"pass":"warn");
+  else if(d.kind==="report")renderReport(d);
+});
+
+function renderReport(d){
+  log("Page title: "+d.title,"info");
+  log("Page URL: "+d.url,"info");
+  log("Document ready: "+d.readyState,"info");
+  log("#app exists: "+d.hasApp,(d.hasApp?"pass":"fail"));
+  log("#app content length: "+d.appLength,
+      d.appLength?"pass":"fail");
+  log("render() available: "+d.hasRender,
+      d.hasRender?"pass":"fail");
+  log("NIMBU data available: "+d.hasData,
+      d.hasData?"pass":"fail");
+  log("Tools loaded: "+d.toolCount,
+      d.toolCount>0?"pass":"warn");
+  log("Supabase client available: "+d.hasSupabase,
+      d.hasSupabase?"pass":"warn");
+  log("Supabase library available: "+d.hasSupabaseLibrary,
+      d.hasSupabaseLibrary?"pass":"warn");
+  log("Page theme classes: "+d.themeClasses,"info");
+  log("Body background: "+d.bodyBackground,"info");
+  log("Visible buttons: "+d.buttonCount,"info");
+  log("Forms: "+d.formCount+" | Inputs: "+d.inputCount,"info");
+  log("Stylesheets: "+d.cssCount,"info");
+  log("Scripts: "+d.scriptCount,"info");
+  log("Page text: "+d.pageText,"info");
+}
+
+function makeInstrumentation(appMode){
+return '<script>(function(){'+
+(appMode?'document.documentElement.classList.add("is-app");':'')+
+'function send(kind,message,extra){parent.postMessage(Object.assign({nimbuTesterResult:true,kind:kind,message:message},extra||{}),"*");}'+
+'window.addEventListener("error",function(e){var t=e.target;if(t&&t!==window&&(t.src||t.href)){send("error","Resource failed: "+(t.src||t.href));}else{send("error","JS ERROR: "+e.message+" @ "+String(e.filename||"").split("/").pop()+":"+e.lineno+":"+e.colno);}},true);'+
+'window.addEventListener("unhandledrejection",function(e){send("error","Promise rejection: "+(e.reason&&e.reason.message||e.reason));});'+
+'window.addEventListener("click",function(e){var t=e.target.closest&&e.target.closest("button,a,input[type=submit],input[type=button],[role=button]");if(!t)return;var label=(t.innerText||t.value||t.getAttribute("aria-label")||t.title||"unlabelled").trim().slice(0,100);send("click","Clicked: "+label+" | "+t.tagName+" | disabled="+!!t.disabled);setTimeout(function(){var bg=getComputedStyle(document.body).backgroundColor;send("theme","After click '"+label+"': body background="+bg,{changed:bg!==window.__testerLastBg});window.__testerLastBg=bg;},700);},true);'+
+'window.__testerLastBg=getComputedStyle(document.body).backgroundColor;'+
+'window.addEventListener("message",function(e){var d=e.data;if(!d||!d.nimbuTester)return;try{if(d.nimbuTester==="report"){var a=document.getElementById("app"),buttons=[].slice.call(document.querySelectorAll("button,[role=button],input[type=button],input[type=submit]"));var r={title:document.title,url:location.href,readyState:document.readyState,hasApp:!!a,appLength:a?a.innerHTML.length:0,hasRender:typeof window.render==="function",hasData:!!window.NIMBU,toolCount:window.NIMBU&&window.NIMBU.tools?window.NIMBU.tools.length:0,hasSupabase:!!window.NIMBU_SUPABASE,hasSupabaseLibrary:!!window.supabase,themeClasses:document.documentElement.className,bodyBackground:getComputedStyle(document.body).backgroundColor,buttonCount:buttons.length,formCount:document.forms.length,inputCount:document.querySelectorAll("input,textarea,select").length,cssCount:document.styleSheets.length,scriptCount:document.scripts.length,pageText:(a?a.innerText:document.body.innerText).trim().slice(0,180)};parent.postMessage({nimbuTesterResult:true,kind:"report",...r},"*");}'+
+'if(d.nimbuTester==="buttons"){var bs=[].slice.call(document.querySelectorAll("button,[role=button],input[type=button],input[type=submit]"));send("audit","--- Button audit: "+bs.length+" controls ---");bs.forEach(function(b,i){var label=(b.innerText||b.value||b.getAttribute("aria-label")||b.title||"UNLABELLED").trim().replace(/\\s+/g," ").slice(0,70);var inline=!!b.onclick;var disabled=!!b.disabled;var hasId=b.id?"#"+b.id:"";send("audit",(i+1)+". "+label+" "+hasId+" disabled="+disabled+" inlineHandler="+inline,{level:disabled?"warn":"info"});});send("audit","Note: addEventListener handlers cannot be reliably detected from the DOM. Click each control manually to confirm its behavior.");}'+
+'if(d.nimbuTester==="themes"){send("audit","--- Theme audit ---");send("audit","Root classes: "+document.documentElement.className);send("audit","Body classes: "+document.body.className);send("audit","Body background: "+getComputedStyle(document.body).backgroundColor);var vars=["--bg","--text","--surface","--card","--primary","--accent"];vars.forEach(function(v){var x=getComputedStyle(document.documentElement).getPropertyValue(v).trim()||getComputedStyle(document.body).getPropertyValue(v).trim();send("audit",v+" = "+(x||"(not defined)"),{level:x?"pass":"warn"});});var els=[].slice.call(document.querySelectorAll("button,a,[role=button],select"));var found=els.filter(function(x){return /theme|dark|light|midnight|snow|aurora|sunset|appearance/i.test((x.innerText||"")+" "+(x.title||"")+" "+(x.getAttribute("aria-label")||"")+" "+(x.id||"")+" "+(x.className||""));});send("audit","Theme-related controls found: "+found.length,{level:found.length?"pass":"warn"});found.forEach(function(x){send("audit","Theme control: "+(x.innerText||x.title||x.id||x.tagName).trim().slice(0,80));});}'+
+'if(d.nimbuTester==="route"){location.hash="#/ask";setTimeout(function(){var a=document.getElementById("app");var text=(a?a.innerText:document.body.innerText).trim();var nested=[].slice.call(document.querySelectorAll("iframe")).map(function(x){return x.getAttribute("src")||"(no src)"});send("route","KITTO route hash="+location.hash+" | app text length="+text.length+" | nested iframes="+nested.join(", "),{ok:!!a&&text.length>0});},1600);}'+
+'if(d.nimbuTester==="home"){location.hash="#/";setTimeout(function(){send("route","Returned to home route: "+location.hash,{ok:!!document.getElementById("app")});},700);}'+
+'}catch(err){send("error","Tester command failed: "+err.message);}});'+
+'})();<\/script>';
+}
+
 function run(appMode){
- lines=[];log("Running ("+(appMode?"app mode":"normal")+")...");
- fetch("nimbu.html?t="+Date.now(),{cache:"no-store"}).then(function(r){
-  log("nimbu.html status: "+r.status);return r.text();
- }).then(function(html){
-  var scripts=[],re=/<script[^>]*\ssrc=["']([^"']+)["']/gi,m;
-  while((m=re.exec(html)))scripts.push(m[1]);
-  log("Script order in nimbu.html:\n  "+scripts.join("\n  "));
-  log("Supabase CDN tag: "+/supabase/i.test(scripts.join(" ").replace(/supabase\.js/g,""))+" | supabase.js tag: "+scripts.some(function(x){return /^supabase\.js/.test(x)}));
-  var inst=html.replace(/<head[^>]*>/i,function(h){return h+catcher(appMode)});
-  f.onload=function(){setTimeout(report,2500)};
-  f.srcdoc=inst;
- }).catch(function(e){log("FETCH FAILED: "+e)});
+  currentMode=appMode?"app":"normal";
+  reset("Running "+currentMode+" mode...");
+  log("Fetching nimbu.html...");
+  fetch("./nimbu.html?diag="+Date.now(),{cache:"no-store"})
+  .then(function(response){
+    log("HTTP status: "+response.status,response.ok?"pass":"fail");
+    if(!response.ok)throw new Error("nimbu.html returned "+response.status);
+    return response.text();
+  })
+  .then(function(html){
+    var base=new URL("./nimbu.html",location.href).href;
+    html=html.replace(/<head([^>]*)>/i,function(match,attrs){
+      return "<head"+attrs+"><base href=\""+base.replace(/"/g,"&quot;")+"\">";
+    });
+    html=html.replace(/<head([^>]*)>/i,function(match,attrs){
+      return match+makeInstrumentation(appMode);
+    });
+    frame.onload=function(){
+      log("Preview loaded. Waiting for scripts...", "info");
+      setTimeout(function(){send("report");},1800);
+    };
+    frame.srcdoc=html;
+  })
+  .catch(function(error){log("Could not load page: "+error.message,"fail");});
 }
-function report(){
- try{
-  var w=f.contentWindow,d=f.contentDocument,app=d.getElementById("app");
-  log("--- after 2.5 seconds ---");
-  log("#app content length: "+(app?app.innerHTML.length:"no #app element"));
-  log("typeof render: "+typeof w.render+" | NIMBU data: "+!!w.NIMBU+" | tools: "+(w.NIMBU&&w.NIMBU.tools?w.NIMBU.tools.length:"n/a"));
-  log("Supabase client: "+!!w.NIMBU_SUPABASE+" | supabase library: "+!!w.supabase);
-  log("is-app class: "+d.documentElement.classList.contains("is-app"));
-  log("Page text starts: "+(app?app.textContent.trim().slice(0,80):""));
- }catch(e){log("REPORT FAILED: "+e)}
+
+function command(name){
+  if(!frame.contentWindow||!frame.contentDocument||!frame.contentDocument.body){
+    log("Run a page test first.","warn");return;
+  }
+  send(name);
 }
-document.getElementById("n").onclick=function(){run(false)};
-document.getElementById("a").onclick=function(){run(true)};
-document.getElementById("c").onclick=function(){navigator.clipboard.writeText(out.textContent).then(function(){alert("Copied")},function(){alert("Copy blocked: select the text manually")})};
-</script></body></html>
+
+document.getElementById("normal").onclick=function(){run(false);};
+document.getElementById("appmode").onclick=function(){run(true);};
+document.getElementById("all").onclick=function(){
+  run(false);
+  setTimeout(function(){
+    command("buttons");
+    command("themes");
+  },4500);
+};
+document.getElementById("buttons").onclick=function(){command("buttons");};
+document.getElementById("themes").onclick=function(){command("themes");};
+document.getElementById("kitto").onclick=function(){command("route");};
+document.getElementById("home").onclick=function(){command("home");};
+document.getElementById("clear").onclick=function(){
+  reset("Report cleared.");
+};
+document.getElementById("copy").onclick=function(){
+  var text=out.textContent;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      alert("Report copied.");
+    }).catch(function(){prompt("Copy report:",text);});
+  }else prompt("Copy report:",text);
+};
+})();
+</script>
+</body>
+</html>

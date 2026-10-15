@@ -1,220 +1,427 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NIMBU Full Diagnostics</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIMBU Health Check</title>
 <style>
-:root{color-scheme:light}
-*{box-sizing:border-box}
-body{font:15px/1.5 system-ui,sans-serif;margin:0;padding:16px;background:#f4f6fb;color:#18202b}
-h1{font-size:24px;margin:0}
-h2{font-size:17px;margin:18px 0 8px}
-p{color:#536174}
-button{font:inherit;font-weight:600;padding:10px 13px;border:0;border-radius:10px;background:#18202b;color:white;margin:3px;cursor:pointer}
-button.secondary{background:#e0e6ef;color:#18202b}
-button:disabled{opacity:.5}
-.card{background:white;border:1px solid #dce2eb;border-radius:14px;padding:14px;margin:12px 0}
-.actions{display:flex;flex-wrap:wrap;gap:5px}
-pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#101722;color:#d9e5f4;padding:13px;border-radius:10px;font-size:12px;max-height:440px;overflow:auto}
-.status{font-weight:700}
-.pass{color:#16834a}.warn{color:#9a6500}.fail{color:#c32d3b}
-iframe{display:block;width:100%;height:650px;border:1px solid #ccd4e1;border-radius:12px;background:white}
-.small{font-size:12px;color:#657187}
+:root {
+  color-scheme: dark;
+  --bg: #090b14;
+  --panel: #121626;
+  --border: #293149;
+  --text: #f1f4ff;
+  --muted: #a1abc4;
+  --green: #51e6a3;
+  --red: #ff7185;
+  --yellow: #ffd477;
+  --blue: #9daaff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
+main { max-width: 900px; margin: auto; padding: 22px 15px 50px; }
+header { margin-bottom: 22px; }
+h1 { margin: 0 0 7px; font-size: 28px; }
+p { color: var(--muted); line-height: 1.6; }
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 14px 0;
+}
+.summary { font-size: 19px; font-weight: 750; }
+.progress {
+  height: 8px; background: #272d40;
+  border-radius: 10px; overflow: hidden; margin-top: 12px;
+}
+#bar { width: 0%; height: 100%; background: var(--green); transition: width .2s; }
+.check {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 13px 0; border-bottom: 1px solid var(--border);
+}
+.check:last-child { border-bottom: 0; }
+.status { min-width: 78px; font-size: 12px; font-weight: 800; }
+.pass { color: var(--green); }
+.fail { color: var(--red); }
+.warn { color: var(--yellow); }
+.pending { color: var(--muted); }
+.detail { min-width: 0; flex: 1; }
+.detail strong { display: block; overflow-wrap: anywhere; }
+.detail small {
+  display: block; color: var(--muted); margin-top: 5px;
+  overflow-wrap: anywhere; line-height: 1.5;
+}
+button, .link {
+  display: inline-block; padding: 11px 14px; border-radius: 10px;
+  border: 1px solid var(--border); background: #222a43;
+  color: white; text-decoration: none; font-size: 14px;
+  font-weight: 700; cursor: pointer; margin: 4px 4px 4px 0;
+}
+button:disabled { opacity: .5; }
+.links { display: flex; flex-wrap: wrap; gap: 4px; }
+.note { font-size: 13px; }
+code { color: var(--blue); overflow-wrap: anywhere; }
 </style>
 </head>
 <body>
+<main>
+  <header>
+    <h1>🔎 NIMBU Health Check</h1>
+    <p>Checks published files, navigation links, app routes and important project assets.</p>
+  </header>
 
-<h1>🍋 NIMBU Full Diagnostics</h1>
-<p>Test loading, JavaScript, navigation, buttons, themes, KITTO AI and Supabase.</p>
+  <section class="panel">
+    <div class="summary" id="summary">Ready to check your app</div>
+    <p id="progressText">Press Run Full Check to begin.</p>
+    <div class="progress"><div id="bar"></div></div>
+    <p class="note">This checks published files and source code. It cannot guarantee that every button or live AI feature works.</p>
+    <button id="run">▶ Run Full Check</button>
+    <button id="clear">Clear Results</button>
+  </section>
 
-<div class="card">
-  <h2>1. Run tests</h2>
-  <div class="actions">
-    <button id="normal">Test normal mode</button>
-    <button id="appmode">Test app mode</button>
-    <button id="all">Run all checks</button>
-    <button id="copy" class="secondary">Copy report</button>
-    <button id="clear" class="secondary">Clear report</button>
-  </div>
-  <p class="small">All checks run against your live nimbu.html. Keep your site published before testing.</p>
-</div>
+  <section class="panel">
+    <h2>Quick links</h2>
+    <div class="links">
+      <a class="link" href="./nimbu.html">Open NIMBU</a>
+      <a class="link" href="./nimbu.html#/debate">Test Debate Route</a>
+      <a class="link" href="./debate.html">Open Debate Room</a>
+      <a class="link" href="./kitto-ai.html">Open KITTO AI</a>
+      <a class="link" href="https://github.com/aryanchaudhary5446-eng/nimbu">GitHub Repository</a>
+    </div>
+  </section>
 
-<div class="card">
-  <h2>2. Targeted tests</h2>
-  <div class="actions">
-    <button id="buttons">Audit buttons</button>
-    <button id="themes">Audit themes</button>
-    <button id="kitto">Test KITTO AI route</button>
-    <button id="home" class="secondary">Return to home route</button>
-  </div>
-  <p class="small">Button audits inspect controls without automatically clicking potentially destructive actions.</p>
-</div>
+  <section class="panel">
+    <h2>Diagnostic results</h2>
+    <div id="results"><p>Checks will appear here.</p></div>
+  </section>
 
-<div class="card">
-  <h2>3. Results</h2>
-  <p id="summary" class="status">Waiting for test...</p>
-  <pre id="out">Press “Run all checks” to begin.</pre>
-</div>
-
-<div class="card">
-  <h2>4. Live app preview</h2>
-  <iframe id="frame" title="NIMBU live test"></iframe>
-  <p class="small">Interact with the app above to test real buttons and theme changes. Click events and errors will be logged.</p>
-</div>
+  <section class="panel">
+    <h2>What this can tell you</h2>
+    <p><span class="pass">PASS</span> — the test succeeded.</p>
+    <p><span class="fail">FAIL</span> — a file or expected code could not be found.</p>
+    <p><span class="warn">CHECK</span> — the test needs manual verification or is inconclusive.</p>
+    <p class="note">A successful file check doesn't prove the code executes correctly. If a button fails, we may need to inspect that page's JavaScript separately.</p>
+  </section>
+</main>
 
 <script>
-(function(){
-"use strict";
+(() => {
+  "use strict";
 
-var out=document.getElementById("out");
-var summary=document.getElementById("summary");
-var frame=document.getElementById("frame");
-var lines=[];
-var results={pass:0,warn:0,fail:0};
-var currentMode="normal";
-var testStarted=false;
+  const $ = id => document.getElementById(id);
+  const results = $("results");
+  const runButton = $("run");
 
-function log(message,type){
-  type=type||"info";
-  var prefix={pass:"PASS",warn:"WARN",fail:"FAIL",info:"INFO"};
-  lines.push("["+prefix[type]+"] "+message);
-  results[type==="pass"?"pass":type==="warn"?"warn":type==="fail"?"fail":"pass"]++;
-  out.textContent=lines.join("\n");
-  summary.textContent=
-    "PASS: "+results.pass+" | WARN: "+results.warn+" | FAIL: "+results.fail;
-  summary.className="status "+
-    (results.fail?"fail":results.warn?"warn":"pass");
-}
+  const checks = [
+    {
+      name: "Main app HTML",
+      file: "./nimbu.html",
+      required: true,
+      test: text => ({
+        ok: /<html[\s>]/i.test(text) && /<body[\s>]/i.test(text),
+        detail: "Checks for the main HTML document and body."
+      })
+    },
+    {
+      name: "Navigation: Debate Room button",
+      file: "./nimbu.html",
+      required: true,
+      test: text => ({
+        ok: /href\s*=\s*["']#\/debate["']/i.test(text),
+        detail: 'Looks for href="#/debate" in the published HTML. If missing, check your committed nimbu.html.'
+      })
+    },
+    {
+      name: "App JavaScript",
+      file: "./app.js",
+      required: true,
+      test: text => ({
+        ok: text.length > 100 && /function\s+render|render\s*=\s*(?:function|\()/i.test(text),
+        detail: "Checks that app.js is published and appears to contain the app renderer."
+      })
+    },
+    {
+      name: "Debate route in app.js",
+      file: "./app.js",
+      required: true,
+      test: text => ({
+        ok: /debate\s*:/i.test(text),
+        detail: "Looks for a debate route entry. If missing, the navigation link may not open a view."
+      })
+    },
+    {
+      name: "Debate iframe connection",
+      file: "./app.js",
+      required: true,
+      test: text => ({
+        ok: /debate\s*:[\s\S]{0,1500}debate\.html/i.test(text),
+        detail: "Looks for debate.html near the debate route. A different valid implementation may need manual review."
+      })
+    },
+    {
+      name: "Debate Room HTML",
+      file: "./debate.html",
+      required: true,
+      test: text => ({
+        ok: /<html[\s>]/i.test(text) && /<body[\s>]/i.test(text),
+        detail: "Checks the published standalone Debate Room page."
+      })
+    },
+    {
+      name: "Debate Room CSS",
+      file: "./debate.css",
+      required: true,
+      test: text => ({
+        ok: text.length > 20,
+        detail: "Checks that the debate stylesheet exists and is not empty."
+      })
+    },
+    {
+      name: "Debate Room JavaScript",
+      file: "./debate.js",
+      required: true,
+      test: text => ({
+        ok: text.length > 20,
+        detail: "Checks that the debate JavaScript exists and is not empty."
+      })
+    },
+    {
+      name: "Main stylesheet",
+      file: "./style.css",
+      required: true,
+      test: text => ({
+        ok: text.length > 20,
+        detail: "Checks the main NIMBU stylesheet."
+      })
+    },
+    {
+      name: "Tools data",
+      file: "./data.js",
+      required: false,
+      test: text => ({
+        ok: text.length > 20,
+        detail: "Optional check: tools or app data may be defined here."
+      })
+    },
+    {
+      name: "Pro features",
+      file: "./pro.js",
+      required: false,
+      test: text => ({
+        ok: text.length > 20,
+        detail: "Optional check for the additional NIMBU features script."
+      })
+    },
+    {
+      name: "KITTO AI page",
+      file: "./kitto-ai.html",
+      required: false,
+      test: text => ({
+        ok: /<html[\s>]/i.test(text) && /<body[\s>]/i.test(text),
+        detail: "Optional check for the standalone KITTO AI page."
+      })
+    },
+    {
+      name: "App entry scripts and styles",
+      file: "./nimbu.html",
+      required: true,
+      test: text => {
+        const scripts = [...text.matchAll(/<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi)]
+          .map(m => m[1]).filter(x => !/^(?:https?:|\/\/|data:)/i.test(x));
+        const styles = [...text.matchAll(/<link\b[^>]*\bhref\s*=\s*["']([^"']+\.css(?:\?[^"']*)?)["']/gi)]
+          .map(m => m[1]).filter(x => !/^(?:https?:|\/\/|data:)/i.test(x));
+        const assets = [...new Set([...scripts, ...styles])];
+        return {
+          ok: assets.length > 0,
+          detail: assets.length
+            ? "Found local references: " + assets.join(", ")
+            : "No local script or stylesheet references were detected."
+        };
+      }
+    }
+  ];
 
-function reset(title){
-  lines=[];
-  results={pass:0,warn:0,fail:0};
-  testStarted=true;
-  log(title);
-}
+  function addResult(name, status, detail) {
+    const row = document.createElement("div");
+    row.className = "check";
 
-function send(action,data){
-  frame.contentWindow.postMessage(
-    Object.assign({nimbuTester:action},data||{}),"*"
-  );
-}
+    const badge = document.createElement("div");
+    badge.className = "status " + status;
+    badge.textContent = status === "pass" ? "PASS" :
+      status === "fail" ? "FAIL" :
+      status === "warn" ? "CHECK" : "RUNNING";
 
-window.addEventListener("message",function(event){
-  var d=event.data;
-  if(!d||!d.nimbuTesterResult)return;
-  if(d.kind==="error")log(d.message,"fail");
-  else if(d.kind==="warn")log(d.message,"warn");
-  else if(d.kind==="pass")log(d.message,"pass");
-  else if(d.kind==="click")log(d.message,"info");
-  else if(d.kind==="theme")log(d.message,d.changed?"pass":"warn");
-  else if(d.kind==="audit")log(d.message,d.level||"info");
-  else if(d.kind==="route")log(d.message,d.ok?"pass":"warn");
-  else if(d.kind==="report")renderReport(d);
-});
+    const content = document.createElement("div");
+    content.className = "detail";
 
-function renderReport(d){
-  log("Page title: "+d.title,"info");
-  log("Page URL: "+d.url,"info");
-  log("Document ready: "+d.readyState,"info");
-  log("#app exists: "+d.hasApp,(d.hasApp?"pass":"fail"));
-  log("#app content length: "+d.appLength,
-      d.appLength?"pass":"fail");
-  log("render() available: "+d.hasRender,
-      d.hasRender?"pass":"fail");
-  log("NIMBU data available: "+d.hasData,
-      d.hasData?"pass":"fail");
-  log("Tools loaded: "+d.toolCount,
-      d.toolCount>0?"pass":"warn");
-  log("Supabase client available: "+d.hasSupabase,
-      d.hasSupabase?"pass":"warn");
-  log("Supabase library available: "+d.hasSupabaseLibrary,
-      d.hasSupabaseLibrary?"pass":"warn");
-  log("Page theme classes: "+d.themeClasses,"info");
-  log("Body background: "+d.bodyBackground,"info");
-  log("Visible buttons: "+d.buttonCount,"info");
-  log("Forms: "+d.formCount+" | Inputs: "+d.inputCount,"info");
-  log("Stylesheets: "+d.cssCount,"info");
-  log("Scripts: "+d.scriptCount,"info");
-  log("Page text: "+d.pageText,"info");
-}
+    const title = document.createElement("strong");
+    title.textContent = name;
 
-function makeInstrumentation(appMode){
-return '<script>(function(){'+
-(appMode?'document.documentElement.classList.add("is-app");':'')+
-'function send(kind,message,extra){parent.postMessage(Object.assign({nimbuTesterResult:true,kind:kind,message:message},extra||{}),"*");}'+
-'window.addEventListener("error",function(e){var t=e.target;if(t&&t!==window&&(t.src||t.href)){send("error","Resource failed: "+(t.src||t.href));}else{send("error","JS ERROR: "+e.message+" @ "+String(e.filename||"").split("/").pop()+":"+e.lineno+":"+e.colno);}},true);'+
-'window.addEventListener("unhandledrejection",function(e){send("error","Promise rejection: "+(e.reason&&e.reason.message||e.reason));});'+
-'window.addEventListener("click",function(e){var t=e.target.closest&&e.target.closest("button,a,input[type=submit],input[type=button],[role=button]");if(!t)return;var label=(t.innerText||t.value||t.getAttribute("aria-label")||t.title||"unlabelled").trim().slice(0,100);send("click","Clicked: "+label+" | "+t.tagName+" | disabled="+!!t.disabled);setTimeout(function(){var bg=getComputedStyle(document.body).backgroundColor;send("theme","After click '"+label+"': body background="+bg,{changed:bg!==window.__testerLastBg});window.__testerLastBg=bg;},700);},true);'+
-'window.__testerLastBg=getComputedStyle(document.body).backgroundColor;'+
-'window.addEventListener("message",function(e){var d=e.data;if(!d||!d.nimbuTester)return;try{if(d.nimbuTester==="report"){var a=document.getElementById("app"),buttons=[].slice.call(document.querySelectorAll("button,[role=button],input[type=button],input[type=submit]"));var r={title:document.title,url:location.href,readyState:document.readyState,hasApp:!!a,appLength:a?a.innerHTML.length:0,hasRender:typeof window.render==="function",hasData:!!window.NIMBU,toolCount:window.NIMBU&&window.NIMBU.tools?window.NIMBU.tools.length:0,hasSupabase:!!window.NIMBU_SUPABASE,hasSupabaseLibrary:!!window.supabase,themeClasses:document.documentElement.className,bodyBackground:getComputedStyle(document.body).backgroundColor,buttonCount:buttons.length,formCount:document.forms.length,inputCount:document.querySelectorAll("input,textarea,select").length,cssCount:document.styleSheets.length,scriptCount:document.scripts.length,pageText:(a?a.innerText:document.body.innerText).trim().slice(0,180)};parent.postMessage({nimbuTesterResult:true,kind:"report",...r},"*");}'+
-'if(d.nimbuTester==="buttons"){var bs=[].slice.call(document.querySelectorAll("button,[role=button],input[type=button],input[type=submit]"));send("audit","--- Button audit: "+bs.length+" controls ---");bs.forEach(function(b,i){var label=(b.innerText||b.value||b.getAttribute("aria-label")||b.title||"UNLABELLED").trim().replace(/\\s+/g," ").slice(0,70);var inline=!!b.onclick;var disabled=!!b.disabled;var hasId=b.id?"#"+b.id:"";send("audit",(i+1)+". "+label+" "+hasId+" disabled="+disabled+" inlineHandler="+inline,{level:disabled?"warn":"info"});});send("audit","Note: addEventListener handlers cannot be reliably detected from the DOM. Click each control manually to confirm its behavior.");}'+
-'if(d.nimbuTester==="themes"){send("audit","--- Theme audit ---");send("audit","Root classes: "+document.documentElement.className);send("audit","Body classes: "+document.body.className);send("audit","Body background: "+getComputedStyle(document.body).backgroundColor);var vars=["--bg","--text","--surface","--card","--primary","--accent"];vars.forEach(function(v){var x=getComputedStyle(document.documentElement).getPropertyValue(v).trim()||getComputedStyle(document.body).getPropertyValue(v).trim();send("audit",v+" = "+(x||"(not defined)"),{level:x?"pass":"warn"});});var els=[].slice.call(document.querySelectorAll("button,a,[role=button],select"));var found=els.filter(function(x){return /theme|dark|light|midnight|snow|aurora|sunset|appearance/i.test((x.innerText||"")+" "+(x.title||"")+" "+(x.getAttribute("aria-label")||"")+" "+(x.id||"")+" "+(x.className||""));});send("audit","Theme-related controls found: "+found.length,{level:found.length?"pass":"warn"});found.forEach(function(x){send("audit","Theme control: "+(x.innerText||x.title||x.id||x.tagName).trim().slice(0,80));});}'+
-'if(d.nimbuTester==="route"){location.hash="#/ask";setTimeout(function(){var a=document.getElementById("app");var text=(a?a.innerText:document.body.innerText).trim();var nested=[].slice.call(document.querySelectorAll("iframe")).map(function(x){return x.getAttribute("src")||"(no src)"});send("route","KITTO route hash="+location.hash+" | app text length="+text.length+" | nested iframes="+nested.join(", "),{ok:!!a&&text.length>0});},1600);}'+
-'if(d.nimbuTester==="home"){location.hash="#/";setTimeout(function(){send("route","Returned to home route: "+location.hash,{ok:!!document.getElementById("app")});},700);}'+
-'}catch(err){send("error","Tester command failed: "+err.message);}});'+
-'})();<\/script>';
-}
+    const description = document.createElement("small");
+    description.textContent = detail;
 
-function run(appMode){
-  currentMode=appMode?"app":"normal";
-  reset("Running "+currentMode+" mode...");
-  log("Fetching nimbu.html...");
-  fetch("./nimbu.html?diag="+Date.now(),{cache:"no-store"})
-  .then(function(response){
-    log("HTTP status: "+response.status,response.ok?"pass":"fail");
-    if(!response.ok)throw new Error("nimbu.html returned "+response.status);
-    return response.text();
-  })
-  .then(function(html){
-    var base=new URL("./nimbu.html",location.href).href;
-    html=html.replace(/<head([^>]*)>/i,function(match,attrs){
-      return "<head"+attrs+"><base href=\""+base.replace(/"/g,"&quot;")+"\">";
-    });
-    html=html.replace(/<head([^>]*)>/i,function(match,attrs){
-      return match+makeInstrumentation(appMode);
-    });
-    frame.onload=function(){
-      log("Preview loaded. Waiting for scripts...", "info");
-      setTimeout(function(){send("report");},1800);
-    };
-    frame.srcdoc=html;
-  })
-  .catch(function(error){log("Could not load page: "+error.message,"fail");});
-}
-
-function command(name){
-  if(!frame.contentWindow||!frame.contentDocument||!frame.contentDocument.body){
-    log("Run a page test first.","warn");return;
+    content.append(title, description);
+    row.append(badge, content);
+    results.appendChild(row);
   }
-  send(name);
-}
 
-document.getElementById("normal").onclick=function(){run(false);};
-document.getElementById("appmode").onclick=function(){run(true);};
-document.getElementById("all").onclick=function(){
-  run(false);
-  setTimeout(function(){
-    command("buttons");
-    command("themes");
-  },4500);
-};
-document.getElementById("buttons").onclick=function(){command("buttons");};
-document.getElementById("themes").onclick=function(){command("themes");};
-document.getElementById("kitto").onclick=function(){command("route");};
-document.getElementById("home").onclick=function(){command("home");};
-document.getElementById("clear").onclick=function(){
-  reset("Report cleared.");
-};
-document.getElementById("copy").onclick=function(){
-  var text=out.textContent;
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(function(){
-      alert("Report copied.");
-    }).catch(function(){prompt("Copy report:",text);});
-  }else prompt("Copy report:",text);
-};
+  async function fetchText(file) {
+    const response = await fetch(file, {
+      cache: "no-store",
+      credentials: "same-origin"
+    });
+
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
+
+    const text = await response.text();
+
+    if (!text || !text.trim()) {
+      throw new Error("File is empty");
+    }
+
+    return text;
+  }
+
+  async function runCheck(check) {
+    try {
+      const text = await fetchText(check.file);
+      const outcome = check.test(text);
+
+      if (outcome.ok) {
+        addResult(check.name, "pass", check.file + " — " + outcome.detail);
+        return { pass: true, required: check.required };
+      }
+
+      addResult(
+        check.name,
+        check.required ? "fail" : "warn",
+        check.file + " — " + outcome.detail
+      );
+
+      return { pass: false, required: check.required };
+    } catch (error) {
+      addResult(
+        check.name,
+        check.required ? "fail" : "warn",
+        check.file + " — Could not check: " + error.message
+      );
+
+      return { pass: false, required: check.required };
+    }
+  }
+
+  async function checkReferencedAssets() {
+    try {
+      const html = await fetchText("./nimbu.html");
+
+      const refs = [
+        ...[...html.matchAll(/<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi)].map(m => m[1]),
+        ...[...html.matchAll(/<link\b[^>]*\bhref\s*=\s*["']([^"']+\.css(?:\?[^"']*)?)["']/gi)].map(m => m[1])
+      ];
+
+      const localRefs = [...new Set(refs)].filter(ref =>
+        !/^(?:https?:|\/\/|data:|#)/i.test(ref)
+      );
+
+      if (!localRefs.length) {
+        addResult("Referenced assets", "warn", "No local script or stylesheet paths found.");
+        return { pass: false, required: true };
+      }
+
+      const failures = [];
+
+      for (const ref of localRefs) {
+        try {
+          await fetchText(ref);
+        } catch (error) {
+          failures.push(ref + " (" + error.message + ")");
+        }
+      }
+
+      if (failures.length) {
+        addResult(
+          "Referenced assets",
+          "fail",
+          "These files could not be loaded: " + failures.join(", ")
+        );
+        return { pass: false, required: true };
+      }
+
+      addResult(
+        "Referenced assets",
+        "pass",
+        "All " + localRefs.length + " local script/stylesheet references loaded."
+      );
+
+      return { pass: true, required: true };
+    } catch (error) {
+      addResult("Referenced assets", "fail", error.message);
+      return { pass: false, required: true };
+    }
+  }
+
+  async function runAll() {
+    runButton.disabled = true;
+    results.replaceChildren();
+    $("summary").textContent = "Running checks…";
+    $("progressText").textContent = "Checking published files and routes.";
+    $("bar").style.width = "0%";
+
+    const outcomes = [];
+
+    try {
+      for (let i = 0; i < checks.length; i++) {
+        const outcome = await runCheck(checks[i]);
+        outcomes.push(outcome);
+        $("bar").style.width = Math.round((i + 1) / (checks.length + 1) * 100) + "%";
+        $("progressText").textContent = "Completed " + (i + 1) + " of " + (checks.length + 1) + " checks.";
+      }
+
+      outcomes.push(await checkReferencedAssets());
+
+      const passed = outcomes.filter(x => x.pass).length;
+      const failedRequired = outcomes.filter(x => !x.pass && x.required).length;
+      const warnings = outcomes.filter(x => !x.pass && !x.required).length;
+
+      $("bar").style.width = "100%";
+      $("summary").textContent = failedRequired
+        ? "⚠ " + failedRequired + " required check(s) failed"
+        : "✓ Required checks passed";
+
+      $("progressText").textContent =
+        passed + " passed · " + failedRequired + " required failures · " +
+        warnings + " optional warnings";
+
+      addResult(
+        "Important limitation",
+        "warn",
+        "This page cannot inspect every runtime error or prove every button works. A source file may load but still contain a JavaScript bug."
+      );
+    } catch (error) {
+      addResult("Diagnostic runner", "fail", error.message);
+      $("summary").textContent = "Diagnostic run failed";
+    } finally {
+      runButton.disabled = false;
+    }
+  }
+
+  runButton.addEventListener("click", runAll);
+
+  $("clear").addEventListener("click", () => {
+    results.replaceChildren();
+    $("summary").textContent = "Ready to check your app";
+    $("progressText").textContent = "Press Run Full Check to begin.";
+    $("bar").style.width = "0%";
+  });
 })();
 </script>
 </body>

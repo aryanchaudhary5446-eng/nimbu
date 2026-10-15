@@ -170,7 +170,21 @@ function renderMessage(role,text){
  const mark=document.createElement("div");mark.className="msgmark";mark.textContent=role==="user"?"Y":"✦";
  const body=document.createElement("div");body.className="msgbody";
  const label=document.createElement("strong");label.textContent=role==="user"?"YOU":"KITTO AI";
- const content=document.createElement("div");content.textContent=text;content.style.whiteSpace="pre-wrap";
+ 
+const content=document.createElement("div");
+content.style.whiteSpace="pre-wrap";
+content.style.lineHeight="1.8";
+content.textContent=text
+  .replace(/^#{1,6}\s+/gm,"")
+  .replace(/^\s*>\s?/gm,"")
+  .replace(/^\s*[-*]\s+/gm,"• ")
+  .replace(/^\s*\|.*\|\s*$/gm,"")
+  .replace(/\*\*(.*?)\*\*/g,"$1")
+  .replace(/__(.*?)__/g,"$1")
+  .replace(/`([^`]+)`/g,"$1")
+  .replace(/^\s*✦\s*/gm,"")
+  .replace(/^\s*✧\s*/gm,"");
+
  body.append(label,content);row.append(mark,body);messagesBox.appendChild(row);return row;
 }
 function renderHistory(){

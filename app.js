@@ -619,9 +619,10 @@ color: var(--text, inherit);
     ${kittoBusy ? "disabled" : ""}>Clear conversation</button>
 </div>
 
-  </section>`;
+   </section>`;
 }
 
+async function sendKittoMessage(text) {
   const client = window.NIMBU_SUPABASE;
   if (!client || !client.functions) {
     toast("Supabase did not load. Refresh NIMBU and try again.");

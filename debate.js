@@ -167,20 +167,103 @@
     const conclusion = `For “${state.question}”, the most defensible demo conclusion is to take a small, reversible next step, define success and stop criteria, and seek evidence on the most important uncertainty before making a larger commitment.`;
     return { status, conclusion, summary: `The council's simulated perspectives converge on a test-first approach. Builder emphasizes execution, Skeptic emphasizes downside risk, Researcher emphasizes evidence quality, and Judge combines those priorities. Because this is a local demo with no live model calls or source retrieval, treat this as a structured thinking aid rather than a verified answer.`, agreement, disagreement, strengths, assumptions, verify, risks, nextSteps, scores, confidenceExplanation: `Average persona confidence is ${avgConfidence}% (self-labelled heuristic). It reflects the demo's preset confidence values, not a calibrated probability that the conclusion is true. The evidence-quality score is intentionally lower because no live sources were checked.`, voteText: state.userVote ? `Your usefulness vote: ${PERSONAS.find(p => p.id === state.userVote)?.name || state.userVote}. This records your preference only; no independent expert vote was cast.` : "No user vote has been recorded. The demo does not claim that real AI models voted.", votes: voteCounts };
   }
-  function startDebate(question) {
-    const cleaned = safeText(question).trim();
-    if (!cleaned) { showToast("Enter a question before starting the debate."); $("#ndr-question").focus(); return; }
-    if (cleaned.length > MAX_Q) { showToast(`Keep the question under ${MAX_Q} characters.`); return; }
-    state = emptyState();
-    state.id = `debate-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-    state.question = cleaned; state.createdAt = new Date().toISOString(); state.mode = $("#ndr-mode-select").value || "balanced";
-    state.participants = makeParticipants(cleaned); state.phase = "answers";
-    $("#ndr-report-section").hidden = true;
-    renderAll();
-    if ($("#ndr-save-toggle").checked) saveCurrent(false);
-    $("#ndr-council-title").scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
-    showToast("Four illustrative demo perspectives are ready.");
+   
+async function startDebate(question) {
+  const cleaned = safeText(question).trim();
+
+  if (!cleaned) {
+    showToast("Enter a question before starting.");
+    $("#ndr-question").focus();
+    return;
   }
+
+  if (cleaned.length > MAX_Q) {
+    showToast(`Keep the question under ${MAX_Q} characters.`);
+    return;
+  }
+
+  const client = global.NIMBU_SUPABASE;
+
+  if (!client || !client.functions) {
+    showToast("Supabase connection is not loaded.");
+    return;
+  }
+
+  const button = $('#ndr-form button[type="submit"]');
+  if (button) button.disabled = true;
+
+  state = emptyState();
+  state.id = `debate-${Date.now()}`;
+  state.question = cleaned;
+  state.createdAt = new Date().toISOString();
+  state.mode = $("#ndr-mode-select").value || "balanced";
+  state.phase = "loading";
+  state.demo = false;
+
+  renderAll();
+  showToast("Generating four AI perspectives...");
+
+  const prompts = {
+    builder: `You are Builder, a practical strategist. Give an actionable solution to this question: ${cleaned}. Include your proposal, reasoning, assumptions, limitations, and measurable next steps.`,
+    skeptic: `You are Skeptic, a critical risk analyst. Challenge the proposed approaches to this question: ${cleaned}. Identify weak assumptions, risks, counterarguments, and what could change your view.`,
+    researcher: `You are Researcher, an evidence auditor. Analyze this question: ${cleaned}. Separate known information from assumptions, identify claims requiring verification, and never invent sources or citations.`,
+    judge: `You are Judge, a neutral evaluator. Independently assess this question: ${cleaned}. Compare likely trade-offs, explain uncertainty, and give a balanced provisional conclusion: ${cleaned}.`
+  };
+
+  try {
+    const results = await Promise.all(
+      PERSONAS.map(async persona => {
+        const { data, error } = await client.functions.invoke(
+          "swift-endpoint",
+          { body: { question: prompts[persona.id] || cleaned } }
+        );
+
+        if (error) throw error;
+
+        const answer = data && data.answer;
+        if (typeof answer !== "string" || !answer.trim()) {
+          throw new Error(`${persona.name} returned an empty response.`);
+        }
+
+        return { id: persona.id, answer: answer.trim() };
+      })
+    );
+
+    const templates = makeParticipants(cleaned);
+
+    state.participants = templates.map(persona => {
+      const result = results.find(item => item.id === persona.id);
+      return {
+        ...persona,
+        initial: result ? result.answer : persona.initial,
+        reasoning: "AI-generated response. Review the position above and verify important claims independently.",
+        confidence: 70,
+        critique: "Critique not yet generated by the live AI backend.",
+        revision: "",
+        evidence: persona.id === "researcher"
+          ? "The response identifies evidence to seek; sources have not been independently verified."
+          : persona.evidence
+      };
+    });
+
+    state.phase = "answers";
+    state.demo = false;
+
+    if ($("#ndr-save-toggle").checked) saveCurrent(false);
+
+    renderAll();
+    showToast("Four live AI responses are ready.");
+  } catch (error) {
+    console.error("Debate AI error:", error);
+    state.participants = [];
+    state.phase = "error";
+    renderAll();
+    showToast("AI request failed. Check Supabase logs and function configuration.");
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
   function runCritique() {
     if (!state.participants.length) return;
     if (state.rounds >= maxRounds()) { showToast("This debate has reached its critique-round limit."); return; }

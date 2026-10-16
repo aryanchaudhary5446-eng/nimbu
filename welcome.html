@@ -142,7 +142,13 @@ form.addEventListener('submit', async (event) => {
     };
 
     if (mode === 'signup') {
-      const { data, error } = await supabase.auth.signUp(credentials);
+      const { data, error } = await supabase.auth.signUp({
+  ...credentials,
+  options: {
+    emailRedirectTo:
+      'https://aryanchaudhary5446-eng.github.io/nimbu/welcome.html'
+  }
+});
       if (error) throw error;
 
       if (data.session) {

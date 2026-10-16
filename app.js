@@ -812,3 +812,64 @@ document.addEventListener("click", async function (event) {
   }
 });
 
+/* ---------- NIMBU account buttons ---------- */
+document.addEventListener("click", async function (event) {
+  const logoutButton = event.target.closest("#logoutBtn");
+  const profileButton = event.target.closest("#profileBtn");
+
+  if (logoutButton) {
+    const client = window.NIMBU_SUPABASE;
+    if (!client) {
+      alert("Authentication is unavailable. Please reload NIMBU.");
+      return;
+    }
+
+    logoutButton.disabled = true;
+    try {
+      const { error } = await client.auth.signOut();
+      if (error) throw error;
+      window.location.replace("welcome.html");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      logoutButton.disabled = false;
+      alert("Logout failed. Please try again.");
+    }
+    return;
+  }
+
+  if (profileButton) {
+    const client = window.NIMBU_SUPABASE;
+    if (!client) {
+      alert("Authentication is unavailable. Please reload NIMBU.");
+      return;
+    }
+
+    const { data, error } = await client.auth.getUser();
+    if (error || !data.user) {
+      window.location.replace("welcome.html");
+      return;
+    }
+
+    const user = data.user;
+    const currentName =
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      "";
+
+    const name = prompt("Your display name:", currentName);
+    if (name === null) return;
+
+    const { error: updateError } = await client.auth.updateUser({
+      data: { ...user.user_metadata, full_name: name.trim() }
+    });
+
+    if (updateError) {
+      alert("Could not save your profile: " + updateError.message);
+      return;
+    }
+
+    alert("Profile name saved! Gmail: " + user.email);
+  }
+});
+
+

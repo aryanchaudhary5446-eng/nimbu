@@ -62,6 +62,29 @@ try{var q=location.search,s=sessionStorage;if(/[?&]app=1/.test(q))s.setItem("nim
 <script src="pro.js?v=1"></script>
 <script src="install.js?v=1"></script>
 <script src="appmode.js?v=3"></script>
+
+<script>
+(async function () {
+  try {
+    const client = window.NIMBU_SUPABASE;
+
+    if (!client) {
+      window.location.replace("welcome.html");
+      return;
+    }
+
+    const { data, error } = await client.auth.getSession();
+
+    if (error || !data.session) {
+      window.location.replace("welcome.html");
+    }
+  } catch (error) {
+    console.error("NIMBU session check failed:", error);
+    window.location.replace("welcome.html");
+  }
+})();
+</script>
+
 <script src="kitto-widget.js?v=1"></script>
 <div id="splash" aria-hidden="true">
   <svg class="sp-svg" viewBox="0 20 240 170" aria-hidden="true">

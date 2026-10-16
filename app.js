@@ -744,3 +744,27 @@ document.addEventListener("keydown", event => {
 
 window.render = render;
 render();
+
+/* ---------- Supabase logout ---------- */
+document.addEventListener("click", async function (event) {
+  const button = event.target.closest("#logoutBtn");
+  if (!button) return;
+
+  button.disabled = true;
+  button.textContent = "Logging out...";
+
+  try {
+    const client = window.NIMBU_SUPABASE;
+    if (!client) throw new Error("Supabase client is unavailable.");
+
+    const { error } = await client.auth.signOut();
+    if (error) throw error;
+
+    window.location.replace("welcome.html");
+  } catch (error) {
+    console.error("NIMBU logout failed:", error);
+    button.disabled = false;
+    button.textContent = "Logout";
+    alert("Logout failed. Please try again.");
+  }
+});

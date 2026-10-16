@@ -768,3 +768,47 @@ document.addEventListener("click", async function (event) {
     alert("Logout failed. Please try again.");
   }
 });
+
+/* ---------- Change password ---------- */
+document.addEventListener("click", async function (event) {
+  const button = event.target.closest("#changePasswordBtn");
+  if (!button) return;
+
+  const client = window.NIMBU_SUPABASE;
+  if (!client) {
+    alert("Authentication is unavailable. Please reload NIMBU.");
+    return;
+  }
+
+  const newPassword = prompt("Enter your new password (at least 8 characters):");
+  if (newPassword === null) return;
+
+  if (newPassword.length < 8) {
+    alert("Password must be at least 8 characters.");
+    return;
+  }
+
+  const confirmPassword = prompt("Confirm your new password:");
+  if (confirmPassword === null) return;
+
+  if (newPassword !== confirmPassword) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  button.disabled = true;
+  try {
+    const { error } = await client.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) throw error;
+    alert("Password changed successfully!");
+  } catch (error) {
+    console.error("Password update failed:", error);
+    alert(error.message || "Couldn't change password. Please try again.");
+  } finally {
+    button.disabled = false;
+  }
+});
+

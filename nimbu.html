@@ -54,7 +54,8 @@ try{var q=location.search,s=sessionStorage;if(/[?&]app=1/.test(q))s.setItem("nim
 </header>
 <main id="app" tabindex="-1"></main>
 <footer>
-  <p>NIMBU is an independent directory. It does not own or operate the tools listed. Links go to external sites. Your favorites and theme are stored only in this browser.<p class="credit">Built by Aryan · Every AI. One Universe.</p>
+  <p>NIMBU is an independent directory. It does not own or operate the tools listed. Links go to external sites. Your favorites and theme are stored only in this browser.</p>
+<p class="credit">Built by Aryan · Every AI. One Universe.</p>Built by Aryan · Every AI. One Universe.</p>
 </footer>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -71,14 +72,7 @@ try{var q=location.search,s=sessionStorage;if(/[?&]app=1/.test(q))s.setItem("nim
 <script src="appmode.js?v=3"></script>
 
 
-(async function () {
-  try {
-    const client = window.NIMBU_SUPABASE;
 
-    if (!client) {
-      window.location.replace("welcome.html");
-      return;
-    }
 
     
 
